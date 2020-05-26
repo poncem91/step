@@ -1,9 +1,62 @@
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  margin-top: 100px;
+  max-width: 850px;
 }
 
 #greeting-container {
   margin-top: 20px;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+body {
+    background-color: rgb(253, 245, 230, 0.7);
+    font-family: sans-serif;
+}
+
+p {
+    line-height: 26px;
+    font-size: 16px;
+}
+
+#navbar {
+    padding-left: 50px;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background-color:rgb(211, 211, 211);
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    line-height: 80px;
+}
+
+#navbar-title {
+    float: left;
+    font-size: 30px;
+    transition: 0.3s;
+}
+
+#navbar-right {
+    float: right;
+    font-size: 18px;
+    padding-right: 50px;
+}
+
+
+#navbar-right a {
+    display: box;
+    text-decoration: none;
+    color: black;
+    padding: 50px;
+}
+
+#navbar-right a:hover {
+    background: rgb(95, 95, 95);
+    color: white;
 }
