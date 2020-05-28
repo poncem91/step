@@ -14,10 +14,10 @@
             Mafe's Portfolio
         </div>
         <div id="navbar-right">
-            <a href="#void">About Me</a>
-            <a href="#void">Projects</a>
-            <a href="#void">Work Experience</a>
-            <a href="#void">Contact Me</a>
+            <a href="#" onclick="scrollToAboutMe();return false">About Me</a>
+            <a href="#" onclick="scrollToProjects(); return false">Projects</a>
+            <a href="#" onclick="scrollToWorkExperience(); return false;">Work Experience</a>
+            <a href="#" onclick="scrollToContactMe(); return false">Contact Me</a>
         </div>
     </div>
 
@@ -25,7 +25,7 @@
     <div id="content">
 
       <!-- About Me Section -->
-      <div class="section" id="aboutme">
+      <section id="aboutme">
           <h1>About Me</h1>
           <p>Hello! My name is Mafe and I am currently a STEP intern at Google. 
           I was born and raised in Lima, Peru and moved to the US about 6 years ago to pursue my college degree. 
@@ -38,40 +38,64 @@
           </p>
           
           <!-- Arlo Sub-Section -->
-          <center>
+          <div id="arlo">
               <img src="/images/arlo.jpg" alt="My dog Arlo">
-              <p><i>Click here to make Arlo talk:</i></p>
+              <p>Click here to make Arlo talk:</p>
               <button onclick="addRandomArloMessage()">Talk</button>
               <div id="arlo-talks-container"></div>
-              </center>
-      </div>
+          </div>
+      </section>
 
       <!-- Projects Section -->
-      <div class="section" id="projects">
+      <section id="projects">
           <h1>Projects</h1>
-          <ul>
-              <li><b>Finance:</b> A mock stock-trading website implemented using Python, SQL, and Flask, where a user can register, login, change passwords, buy and sell stocks, and see their transaction history.</li>
-              <li><b>Liberty Slot Machine:</b> A three-part program implemented in Python to simulate a game of the Liberty Bell Slot Machine.
-              <ol>
-                  <li>Tests a serious of known spins and outputs expected payout.</li>
-                  <li>Estimates how much money you would expect to earn for every $1 spent, using a simulation of 5000 rounds of the game.</li>
-                  <li>Simulates an Interactive Liberty Bell Game with a starting amount of money inputted by the user, deducts money spent and adds payouts to user's balance as user keeps playing, while letting user know the result of each round played. As each round ends, the user's current balance is printed and user is asked if they want to continue playing. Once balance reaches less that 5 cents, current game ends as not enough money is available to play.</li>
-              </ol>
-              </li>
-              <li><b>Data Visualizations:</b> Program implemented in Python that uses Pandas, Matplotlib and Numpy to create data visualizations from a csv file.</li>
-              <li><b>Speller Dictionary:</b> A dictionary implemented in C used in a program that spell-checks a file.</li>
-          </ul>
-      </div>
+          <dl>
+              <dt>Finance:</dt>
+              <dd>A mock stock-trading website implemented using Python, SQL, and Flask, where a user can register, login, change passwords, buy and sell stocks, and see their transaction history.</dd>
+              
+              <dt>Liberty Slot Machine:</dt>
+              <dd>A three-part program implemented in Python to simulate a game of the Liberty Bell Slot Machine.<dd>
+              <dd>Part one tests a series of known spins and outputs expected payout.</dd>
+              <dd>Part two estimates how much money you would expect to earn for every $1 spent, using a simulation of 5000 rounds of the game.</dd>
+              <dd>Part three simulates an Interactive Liberty Bell Game with a starting amount of money inputted by the user, deducts money spent and adds payouts to user's balance as user keeps playing, while letting user know the result of each round played. As each round ends, the user's current balance is printed and user is asked if they want to continue playing. Once balance reaches less than 5 cents, current game ends as not enough money is available to play.</dd>
+              
+              <dt>Data Visualizations:</dt>
+              <dd>Program implemented in Python that uses Pandas, Matplotlib and Numpy to create data visualizations from a csv file.</dd>
+              
+              <dt>Speller Dictionary:</dt>
+              <dd>A dictionary implemented in C used in a program that spell-checks a file.</dd>
+          </dl>
+      </section>
 
       <!-- Work Experience Section -->
-      <div class="section" id="workexperience">
+      <section id="workexperience">
           <h1>Work Experience</h1>
-      </div>
+          <dl>
+              <dt>Google</dt>
+              <dt class="workposition">Current - Student Training in Engineering Program (STEP) Intern</dt>
+              <dd>Gain experience using different tools and technologies and develop a web application with other STEP team members.</dd>
+
+              <dt>Montana State University - Human Interaction Lab</dt>
+              <dt class="workposition">Spring 2020 - Student Research Assistant</dd>
+              <dd>Assist in the preliminary stages of a research project that seeked to use machine learning to improve the collaboration between humans and robots.</dd>
+              
+              <dt>Foundant Technologies</dt>
+              <dt class="workposition">Spring 2020 - Client Services Intern</dt>
+              <dd>Assist clients that use Foundant’s grant and scholarship management software or fund accounting software with any technical support questions or issues they might have.</dd>
+              
+              <dt>Silver Lining Entertainment</dt>
+              <dt class="workposition">October 2016 to November 2018 - Talent Manager's Assistant</dt>
+              <dd>Managed desk of 20+ actors and coordinated between production, publicists, casting, and clients. Logged over 2,000 company commissions and increased efficiency by digitizing the tracking system.</dd>
+              
+              <dt>USC Annenberg - Media, Diversity, & Social Change Initiative</dt>
+              <dt class="workposition">Summer 2015 - Student Research Assistant</dt>
+              <dd>Analyzed and quantified TV & Film content metrics for the 2014-2015 study: ‘Inclusion or Invisibility? The Comprehensive Annenberg Report on Diversity in Entertainment’ as seen <a href="https://bit.ly/2oBKDUr">here.</a></dd>
+      </section>
 
       <!-- Contact Me Section -->
-      <div class="section" id="contactme">
+      <section id="contactme">
           <h1>Contact Me</h1>
-      </div>
+      </section>
     </div>
   </body>
 </html>
