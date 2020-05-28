@@ -47,50 +47,21 @@ function shrinkNavBar() {
 }
 
 /**
- * Smooths scrolls to About Me Section / top of document
+ * Smooths scrolls to specific Section
  */
-function scrollToAboutMe() {
-    let goToTopLocation = - window.pageYOffset;
+function scrollToSection(sectionId) {
+    let goToLocation;
 
-    window.scrollBy({
-        top: goToTopLocation,
-        behavior: 'smooth'
-    });
-}
-
-/**
- * Smooth scrolls to Projects Section
- */
-function scrollToProjects() {
-    let goToLocation = document.getElementById("projects").getBoundingClientRect().top - 30;
+	// this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
+    if (sectionId == 'aboutme') {
+        goToLocation = - window.pageYOffset;
+    } else {
+        goToLocation = document.getElementById(sectionId).getBoundingClientRect().top - 30;
+    }
 
     window.scrollBy({
         top: goToLocation,
         behavior: 'smooth'
     });
-
-}
-
-/**
- * Smooth scrolls to Work Experience Section
- */
-function scrollToWorkExperience() {
-    let goToLocation = document.getElementById("workexperience").getBoundingClientRect().top;
-
-    window.scrollBy({
-        top: goToLocation,
-        behavior: 'smooth'
-    });
-}
-
-/**
- * Smooth scrolls to Contact Me Section
- */
-function scrollToContactMe() {
-    let goToLocation = document.getElementById("contactme").getBoundingClientRect().top;
-
-    window.scrollBy({
-        top: goToLocation,
-        behavior: 'smooth'
-    });
+	return false;
 }

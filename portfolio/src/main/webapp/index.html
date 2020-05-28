@@ -14,10 +14,10 @@
             Mafe's Portfolio
         </div>
         <div id="navbar-right">
-            <a href="#" onclick="scrollToAboutMe();return false">About Me</a>
-            <a href="#" onclick="scrollToProjects(); return false">Projects</a>
-            <a href="#" onclick="scrollToWorkExperience(); return false;">Work Experience</a>
-            <a href="#" onclick="scrollToContactMe(); return false">Contact Me</a>
+            <a href="#" onclick="return scrollToSection('aboutme');">About Me</a>
+            <a href="#" onclick="return scrollToSection('projects');">Projects</a>
+            <a href="#" onclick="return scrollToSection('workexperience');">Work Experience</a>
+            <a href="#" onclick="return scrollToSection('contactme');">Contact Me</a>
         </div>
     </div>
 
@@ -39,11 +39,12 @@
           
           <!-- Arlo Sub-Section -->
           <div id="arlo">
-              <img src="/images/arlo.jpg" alt="My dog Arlo">
+              <img src="/images/arlo1.jpg" alt="My dog Arlo">
               <p>Click here to make Arlo talk:</p>
               <button onclick="addRandomArloMessage()">Talk</button>
               <div id="arlo-talks-container"></div>
           </div>
+
       </section>
 
       <!-- Projects Section -->
