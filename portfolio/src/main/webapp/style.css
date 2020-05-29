@@ -10,7 +10,7 @@ html {
   max-width: 850px;
   line-height: 26px;
   font-size: 16px;
-  padding-bottom: 50px;
+  padding-bottom: 30px;
   padding-left: 30px;
   padding-right: 30px;
 }
@@ -137,6 +137,32 @@ a:hover{
 #navbar-right a:hover {
     background: rgb(95, 95, 95);
     color: white;
+}
+
+/* Social Media Buttons Layout */
+.social-media {
+    display: flex;
+    justify-content: center;
+}
+
+/* LinkedIn Button */
+#linkedin:hover {
+    color: rgb(40,103,178);
+}
+
+/* Facebook Button */
+#facebook:hover {
+    color: #3b5998;
+}
+
+/* IG Button */
+#instagram:hover {
+    color: #8134AF;
+}
+
+/* Github Button */
+#github:hover {
+    color: orangered;
 }
 
 /* Lightbox */
