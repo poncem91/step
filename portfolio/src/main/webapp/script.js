@@ -42,7 +42,7 @@ function shrinkNavBar() {
     document.getElementById("navbar").style.paddingTop = "35px";
     document.getElementById("navbar").style.paddingBottom = "35px";
     document.getElementById("navbar-title").style.fontSize = "30px";
-    document.getElementById("navbar-right").style.top = "5px";
+    document.getElementById("navbar-right").style.top = "10px";
   }
 }
 
@@ -64,4 +64,49 @@ function scrollToSection(sectionId) {
         behavior: 'smooth'
     });
 	return false;
+}
+
+/**
+ * Lightbox Gallery Implementation
+ */
+
+// keeps track of current picture currently opened
+var currPic;
+
+// Displays Lightbox open user click
+function openLightbox(picIndex) {
+    document.getElementById("lightbox").style.display = "flex";
+    showPic(picIndex);
+}
+
+// Helper function to show specific picture in lightbox
+function showPic(picIndex) {
+  const picsArray = document.getElementsByClassName("lightbox-pic");
+
+  if (picIndex > picsArray.length) {
+    picIndex = 1;	
+  }
+  
+  else if (picIndex < 1) {
+  	picIndex = picsArray.length;
+  }
+
+  for (var i = 0; i < picsArray.length; i++) {
+      picsArray[i].style.display = "none";
+  }
+  
+  picsArray[picIndex - 1].style.display = "block";
+  
+  currPic = picIndex;
+}
+
+// Previous and Next picture functionality
+function changePic(byIndex) {
+    currPic += byIndex;
+    showPic(currPic);
+}
+
+// Closes lightbox
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
 }
