@@ -70,8 +70,9 @@ function scrollToSection(sectionId) {
  * Lightbox Gallery Implementation
  */
 
-// keeps track of current picture currently opened
+// keeps track of current picture currently opened and of array of Pics
 var currPic;
+const picsArray = document.getElementsByClassName("lightbox-pic");
 
 // Displays Lightbox open user click
 function openLightbox(picIndex) {
@@ -81,28 +82,20 @@ function openLightbox(picIndex) {
 
 // Helper function to show specific picture in lightbox
 function showPic(picIndex) {
-  const picsArray = document.getElementsByClassName("lightbox-pic");
-
-  if (picIndex > picsArray.length) {
-    picIndex = 1;	
-  }
-  
-  else if (picIndex < 1) {
-  	picIndex = picsArray.length;
-  }
 
   for (var i = 0; i < picsArray.length; i++) {
       picsArray[i].style.display = "none";
   }
-  
-  picsArray[picIndex - 1].style.display = "block";
-  
+
+  picsArray[picIndex].style.display = "block";
   currPic = picIndex;
+
 }
 
 // Previous and Next picture functionality
 function changePic(byIndex) {
     currPic += byIndex;
+    currPic = (currPic + picsArray.length) % picsArray.length;
     showPic(currPic);
 }
 

@@ -229,7 +229,7 @@ a:hover{
 }
 
 /* Lightbox pic captions */
-.caption {
+figcaption {
     font-size: 16px;
     color: white;
     text-align: center;
