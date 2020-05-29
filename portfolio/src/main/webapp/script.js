@@ -13,16 +13,55 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Adds a random Arlo message to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addRandomArloMessage() {
+  const arloMessages =
+      ['Woof!', 'Woof, Woof!', 'Squirrel?!', 'Treats?!', 'Park?!', 'Zzzzz'];
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const arloMessage = arloMessages[Math.floor(Math.random() * arloMessages.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const arloTalksContainer = document.getElementById('arlo-talks-container');
+  arloTalksContainer.innerText = arloMessage;
+}
+
+/**
+ * Shrinks the navbar when user scrolls down.
+ */
+window.onscroll = function() {shrinkNavBar()};
+
+function shrinkNavBar() {
+  if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
+    document.getElementById("navbar").style.paddingTop = "15px";
+    document.getElementById("navbar").style.paddingBottom = "15px";
+    document.getElementById("navbar-title").style.fontSize = "18px";
+    document.getElementById("navbar-right").style.top = "0px";
+  } else {
+    document.getElementById("navbar").style.paddingTop = "35px";
+    document.getElementById("navbar").style.paddingBottom = "35px";
+    document.getElementById("navbar-title").style.fontSize = "30px";
+    document.getElementById("navbar-right").style.top = "5px";
+  }
+}
+
+/**
+ * Smooths scrolls to specific Section
+ */
+function scrollToSection(sectionId) {
+    let goToLocation;
+
+	// this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
+    if (sectionId == 'aboutme') {
+        goToLocation = - window.pageYOffset;
+    } else {
+        goToLocation = document.getElementById(sectionId).getBoundingClientRect().top - 30;
+    }
+
+    window.scrollBy({
+        top: goToLocation,
+        behavior: 'smooth'
+    });
+	return false;
 }

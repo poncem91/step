@@ -1,9 +1,116 @@
+html {
+    scroll-behavior: smooth;
+}
+
+/* Main Content of Site */
 #content {
   margin-left: auto;
   margin-right: auto;
-  width: 650px;
+  margin-top: 100px;
+  max-width: 850px;
+  line-height: 26px;
+  font-size: 16px;
+  padding-bottom: 50px;
 }
 
-#greeting-container {
+/* Site Sections */
+section {
+    padding-top: 20px;
+}
+
+/* Arlo Sub-Section */
+#arlo {
+    text-align: center;
+    font-style: italic;
+    margin-bottom: -30px;
+}
+
+/* Arlo Talks Sub-Section */
+#arlo-talks-container {
   margin-top: 20px;
+  bottom: 0;
+}
+
+/* Images Sizing */
+img {
+    max-width: 100%;
+}
+
+/* Body Styles */
+body {
+    background-color: rgb(253, 245, 230, 0.7);
+    font-family: sans-serif;
+}
+
+/* Description List Term style */
+dt {
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+/* Description List Details spacing */
+dd {
+    margin-bottom: 0.5em;
+}
+
+/* Description List Term for Work Position */
+dt.workposition {
+    font-style: italic;
+    font-weight: lighter;
+    margin-top: -0.2em;
+}
+
+/* Links Style */
+a {
+    color: black;
+}
+
+/* Links Style when Hovering Mouse */
+a:hover{
+    color: grey;
+}
+
+/* Sticky Navbar */
+#navbar {
+    padding-top: 35px;
+    padding-bottom: 35px;
+    padding-left: 50px;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background-color:rgb(211, 211, 211);
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    transition: 0.5s;
+}
+
+/* Navbar Menu Left Title */
+#navbar-title {
+    float: left;
+    font-size: 30px;
+    transition: 0.3s;
+}
+
+/* Navbar Menu Right Section */
+#navbar-right {
+    position: relative;
+    top: 5px;
+    float: right;
+    font-size: 18px;
+    padding-right: 50px;
+}
+
+/* Navbar Menu Links */
+#navbar-right a {
+    display: box;
+    text-decoration: none;
+    color: black;
+    padding: 50px;
+}
+
+/* Navbar Menu Links when Hovering Mouse */
+#navbar-right a:hover {
+    background: rgb(95, 95, 95);
+    color: white;
 }
