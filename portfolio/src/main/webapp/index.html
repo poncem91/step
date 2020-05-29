@@ -5,6 +5,8 @@
     <title>Mafe's Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <!--Social Media Icons -->
+    <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
   </head>
   <body>
 
@@ -39,12 +41,55 @@
           
           <!-- Arlo Sub-Section -->
           <div id="arlo">
-              <img src="/images/arlo1.jpg" alt="My dog Arlo">
+              <!-- Gallery Thumbnails -->
+              <div class="row">
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo1-t.jpg" alt="Arlo chilling in driveway" onclick="openLightbox(0);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo2-t.jpg" alt="Arlo cooling himself down in stream" onclick="openLightbox(1);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo3-t.jpg" alt="Arlo happy next to lake" onclick="openLightbox(2);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo4-t.jpg" alt="Lazy Arlo" onclick="openLightbox(3);">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo5-t.jpg" alt="Arlo looking at the neighbours" onclick="openLightbox(4);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo6-t.jpg" alt="Arlo sitting during hike" onclick="openLightbox(5);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo7-t.jpg" alt="Arlo relaxing on grass" onclick="openLightbox(6);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo8-t.jpg" alt="Arlo about to be hit by a snowball" onclick="openLightbox(7);">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo9-t.jpg" alt="Arlo dozing off" onclick="openLightbox(8);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo10-t.jpg" alt="Arlo and his brother Benji" onclick="openLightbox(9);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo11-t.jpg" alt="Arlo pretending he's a human sitting on the couch" onclick="openLightbox(10);">
+                  </div>
+                  <div class="column">
+                      <img class="thumbnail" src="/images/arlo12-t.jpg" alt="Arlo being goofy" onclick="openLightbox(11);">
+                  </div>
+              </div>
+
+              <!-- Make Arlo Talk -->
               <p>Click here to make Arlo talk:</p>
               <button onclick="addRandomArloMessage()">Talk</button>
               <div id="arlo-talks-container"></div>
           </div>
-
       </section>
 
       <!-- Projects Section -->
@@ -96,7 +141,80 @@
       <!-- Contact Me Section -->
       <section id="contactme">
           <h1>Contact Me</h1>
+          <p>Please feel free to reach out to me through any of the below platforms:</p>
+          <div class="row">
+              <div class="column social-media">
+                  <a href="https://linkedin.com/in/mariafep" id="linkedin"><i class="fab fa-linkedin fa-7x"></i></a>
+              </div>
+              <div class="column social-media">
+                  <a href="https://facebook.com/mariafe.ponce" id="facebook"><i class="fab fa-facebook-square fa-7x"></i></a>
+              </div>
+              <div class="column social-media">
+                  <a href="https://instagram.com/mafeponce91" id="instagram"><i class="fab fa-instagram-square fa-7x"></i></a>
+              </div>
+              <div class="column social-media">
+                  <a href="https://github.com/poncem91" id="github"><i class="fab fa-github fa-7x"></i></a>
+              </div>
+          </div>
       </section>
     </div>
+
+    <!-- Lightbox Gallery -->
+          <div id="lightbox">
+              <a class="interface-buttons" id="close" onclick="closeLightbox();">Close X</a>
+              <div class="lightbox-content">
+                  <a class="interface-buttons" id="prev" onclick="changePic(-1)">&#10094;</a>
+                  <a class="interface-buttons" id="next" onclick="changePic(1)">&#10095;</a>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo1.jpg" alt="Arlo chilling in driveway">
+                      <figcaption>Arlo chilling in driveway</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo2.jpeg" alt="Arlo cooling himself down in stream">
+                      <figcaption>Arlo cooling himself down in stream</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo3.jpeg" alt="Arlo happy next to lake">
+                      <figcaption>Arlo happy next to lake</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo4.jpeg" alt="Lazy Arlo">
+                      <figcaption>Lazy Arlo</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo5.jpg" alt="Arlo looking at the neighbours">
+                      <figcaption>Arlo looking at the neighbours</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo6.jpeg" alt="Arlo sitting during hike">
+                      <figcaption>Arlo sitting during hike</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo7.jpeg" alt="Arlo relaxing on grass">
+                      <figcaption>Arlo relaxing on grass</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo8.jpeg" alt="Arlo about to be hit by a snowball">
+                      <figcaption>Arlo about to be hit by a snowball</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo9.jpeg" alt="Arlo dozing off">
+                      <figcaption>Arlo dozing off</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo10.jpeg" alt="Arlo and his brother Benji">
+                      <figcaption>Arlo and his brother Benji</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo11.jpeg" alt="Arlo pretending he's a human sitting on the couch">
+                      <figcaption>Arlo pretending he's a human sitting on the couch</figcaption>
+                  </figure>
+                  <figure class="lightbox-pic">
+                      <img src="/images/arlo12.jpeg" alt="Arlo being goofy">
+                      <figcaption>Arlo being goofy</figcaption>
+                  </figure>
+              </div>
+          </div>
+          
   </body>
 </html>

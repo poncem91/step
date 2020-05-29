@@ -42,7 +42,7 @@ function shrinkNavBar() {
     document.getElementById("navbar").style.paddingTop = "35px";
     document.getElementById("navbar").style.paddingBottom = "35px";
     document.getElementById("navbar-title").style.fontSize = "30px";
-    document.getElementById("navbar-right").style.top = "5px";
+    document.getElementById("navbar-right").style.top = "10px";
   }
 }
 
@@ -65,3 +65,54 @@ function scrollToSection(sectionId) {
     });
 	return false;
 }
+
+/**
+ * Lightbox Gallery Implementation
+ */
+
+// keeps track of current picture currently opened and of array of Pics
+var currPic;
+const picsArray = document.getElementsByClassName("lightbox-pic");
+
+// Displays Lightbox open user click
+function openLightbox(picIndex) {
+    document.getElementById("lightbox").style.display = "flex";
+    showPic(picIndex);
+}
+
+// Helper function to show specific picture in lightbox
+function showPic(picIndex) {
+
+  for (var i = 0; i < picsArray.length; i++) {
+      picsArray[i].style.display = "none";
+  }
+
+  picsArray[picIndex].style.display = "block";
+  currPic = picIndex;
+
+}
+
+// Previous and Next picture functionality
+function changePic(byIndex) {
+    currPic += byIndex;
+    currPic = (currPic + picsArray.length) % picsArray.length;
+    showPic(currPic);
+}
+
+// Closes lightbox
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
+}
+
+// Keyboard functionality
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' || event.keyCode === 27) {
+        closeLightbox();
+    }
+    else if (event.key === 'ArrowRight' || event.keyCode === 39) {
+        changePic(1);
+    }
+    else if (event.key === 'ArrowLeft' || event.keyCode === 37) {
+        changePic(-1);
+    }
+});
