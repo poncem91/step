@@ -103,3 +103,16 @@ function changePic(byIndex) {
 function closeLightbox() {
   document.getElementById("lightbox").style.display = "none";
 }
+
+// Keyboard functionality
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' || event.keyCode === 27) {
+        closeLightbox();
+    }
+    else if (event.key === 'ArrowRight' || event.keyCode === 39) {
+        changePic(1);
+    }
+    else if (event.key === 'ArrowLeft' || event.keyCode === 37) {
+        changePic(-1);
+    }
+});
