@@ -119,7 +119,13 @@ document.addEventListener('keydown', function(event) {
 
 /**  */
 function sayHello() {
-  fetch('/data').then(response => response.text()).then((helloMessage) => {
-    document.getElementById('hello-container').innerText = helloMessage;
+  fetch('/data').then(response => response.json()).then((helloMessage) => {
+    const helloElement = document.getElementById('hello-container');
+    helloElement.innerHTLM = '';
+    Object.values(helloMessage).forEach(message => {
+        var listNode = document.createElement('li');
+        listNode.innerText = message;
+        helloElement.appendChild(listNode);
+    })
   });
 }
