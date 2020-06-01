@@ -116,3 +116,10 @@ document.addEventListener('keydown', function(event) {
         changePic(-1);
     }
 });
+
+/**  */
+function sayHello() {
+  fetch('/data').then(response => response.text()).then((helloMessage) => {
+    document.getElementById('hello-container').innerText = helloMessage;
+  });
+}
