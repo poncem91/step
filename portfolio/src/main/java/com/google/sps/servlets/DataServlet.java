@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
     
-    private ArrayList<String> helloMessages;
+  private ArrayList<String> helloMessages;
 
   @Override
   public void init() {

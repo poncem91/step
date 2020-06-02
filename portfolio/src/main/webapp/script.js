@@ -117,11 +117,11 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/**  */
+/** Welcome Comments */
 function sayHello() {
   fetch('/data').then(response => response.json()).then((helloMessage) => {
     const helloElement = document.getElementById('hello-container');
-    helloElement.innerHTLM = '';
+    helloElement.innerHTML = '';
     Object.values(helloMessage).forEach(message => {
         var listNode = document.createElement('li');
         listNode.innerText = message;
