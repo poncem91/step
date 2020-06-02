@@ -117,15 +117,14 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/** Welcome Comments */
-function sayHello() {
-  fetch('/data').then(response => response.json()).then((helloMessage) => {
-    const helloElement = document.getElementById('hello-container');
-    helloElement.innerHTML = '';
-    Object.values(helloMessage).forEach(message => {
+/** Fetches Comments History */
+function getComments() {
+  fetch('/commentshistory').then(response => response.json()).then((comments) => {
+    const commentsHistory = document.getElementById('comments-history');
+    comments.forEach(message => {
         var listNode = document.createElement('li');
         listNode.innerText = message;
-        helloElement.appendChild(listNode);
+        commentsHistory.appendChild(listNode);
     })
   });
 }
