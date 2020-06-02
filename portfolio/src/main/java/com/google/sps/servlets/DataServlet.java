@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that allows users to add comments and returns comment history */
-@WebServlet("/commentshistory")
+@WebServlet("/comments")
 public class DataServlet extends HttpServlet {
     
   private final ArrayList<String> commentsHistory = new ArrayList<>();
@@ -49,9 +49,9 @@ public class DataServlet extends HttpServlet {
     }
 
     if (email == null || email.equals("")) {
-        fullComment = name + " says: " + comment;
+        fullComment = name + " said: " + comment;
     } else {
-        fullComment = name + " at " + email + " says: " + comment;
+        fullComment = name + " at " + email + " said: " + comment;
     }
 
     commentsHistory.add(fullComment);

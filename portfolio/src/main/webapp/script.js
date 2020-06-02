@@ -117,9 +117,9 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/** Fetches Comments History */
+/** Fetches Comments */
 function getComments() {
-  fetch('/commentshistory').then(response => response.json()).then((comments) => {
+  fetch('/comments').then(response => response.json()).then((comments) => {
     const commentsHistory = document.getElementById('comments-history');
     comments.forEach(message => {
         var listNode = document.createElement('li');

@@ -165,15 +165,7 @@ a:hover{
     color: orangered;
 }
 
-/* Comment Formm Styling */
-label::after {
-    content: "\a";
-    white-space: pre;
-}
-form::after {
-    content: "\a";
-    white-space: pre;
-}
+/* Comment Form Styling */
 input, textarea {
   width: 300px;
 }
@@ -186,6 +178,9 @@ input, textarea {
 #comments-history::after {
     content: "\a";
     white-space: pre;
+}
+label {
+    display: block;
 }
 
 /* Lightbox */
