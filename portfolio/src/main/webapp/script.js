@@ -124,7 +124,7 @@ function getComments() {
     comments.forEach(message => {
         var listNode = document.createElement('li');
         listNode.innerText = message;
-        commentsHistory.appendChild(listNode);
+        helloElement.appendChild(listNode);
     })
   });
 }
