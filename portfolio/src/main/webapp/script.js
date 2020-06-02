@@ -116,3 +116,16 @@ document.addEventListener('keydown', function(event) {
         changePic(-1);
     }
 });
+
+/** Welcome Comments */
+function sayHello() {
+  fetch('/data').then(response => response.json()).then((helloMessage) => {
+    const helloElement = document.getElementById('hello-container');
+    helloElement.innerHTML = '';
+    Object.values(helloMessage).forEach(message => {
+        var listNode = document.createElement('li');
+        listNode.innerText = message;
+        helloElement.appendChild(listNode);
+    })
+  });
+}
