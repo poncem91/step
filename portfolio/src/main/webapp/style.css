@@ -165,29 +165,6 @@ a:hover{
     color: orangered;
 }
 
-/* Comment Formm Styling */
-label::after {
-    content: "\a";
-    white-space: pre;
-}
-form::after {
-    content: "\a";
-    white-space: pre;
-}
-input, textarea {
-  width: 300px;
-}
-#submit {
-    width: 100px;
-}
-#comments-history {
-    font-style: italic;
-}
-#comments-history::after {
-    content: "\a";
-    white-space: pre;
-}
-
 /* Lightbox */
 #lightbox {
     display: none;
