@@ -13,6 +13,12 @@
 // limitations under the License.
 
 package com.google.sps.servlets;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -21,18 +27,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that allows users to add comments and returns comment history */
+/** Servlet that allows users to add comments and returns comment  */
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
     
-  private final ArrayList<String> commentsHistory = new ArrayList<>();
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    ArrayList<String> comments = new ArrayList<>();
+
+    for (Entity entity : results.asIterable()) {
+      String message = (String) entity.getProperty("message");
+      comments.add(message);
+    }
+
     Gson gson = new Gson();
-    String json = gson.toJson(commentsHistory);
+
     response.setContentType("application/json;");
-    response.getWriter().println(json);
+    response.getWriter().println(gson.toJson(comments));
   }
 
   @Override
@@ -42,6 +58,7 @@ public class DataServlet extends HttpServlet {
     String email = request.getParameter("email");
     String comment = request.getParameter("comment");
     String fullComment = new String();
+    long timestamp = System.currentTimeMillis();
 
     // Builds comment message
     if (name == null || name.equals("")) {
@@ -49,12 +66,17 @@ public class DataServlet extends HttpServlet {
     }
 
     if (email == null || email.equals("")) {
-        fullComment = name + " says: " + comment;
+        fullComment = name + " said: " + comment;
     } else {
-        fullComment = name + " at " + email + " says: " + comment;
+        fullComment = name + " at " + email + " said: " + comment;
     }
 
-    commentsHistory.add(fullComment);
+    Entity commentsEntity = new Entity("Comment");
+    commentsEntity.setProperty("message", fullComment);
+    commentsEntity.setProperty("timestamp", timestamp);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentsEntity);
     
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
