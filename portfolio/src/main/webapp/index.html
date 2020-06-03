@@ -146,16 +146,6 @@
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST">
           <p>
-              <label for="numcomments">Choose the Number of Comments to Display:</label>
-              <select name="numcomments" id="numcomments" onchange="getComments(this.value);">
-                  <option value="5">5</option>
-                  <option value="10" selected>10</option>
-                  <option value="15">15</option>
-                  <option value="30">30</option>
-                  <option value="50">50</option>
-              </select>
-          </p>
-          <p>
               <label for="name">Name:</label>
               <input id="name" type="text" name="name" placeholder="Optional">
           </p>
@@ -169,6 +159,16 @@
           </p>
           <p>
               <input id="submit" type="submit" />
+          </p>
+          <p>
+              <label for="numcomments">Choose the Number of Comments to Display Below:</label>
+              <select name="numcomments" id="numcomments" onchange="getComments(this.value);">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+              </select>
           </p>
           </form>
           <div id="comments-history"></div>
