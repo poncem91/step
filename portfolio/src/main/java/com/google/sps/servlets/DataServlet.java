@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that allows users to add comments and returns comment  */
+/** Servlet that allows users to add comments and returns comment history  */
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
     
