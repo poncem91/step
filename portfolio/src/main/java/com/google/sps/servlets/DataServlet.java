@@ -29,8 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that allows users to add comments and returns comment history  */
 @WebServlet("/comments")
-public class DataServlet extends HttpServlet {
-    
+public class DataServlet extends HttpServlet {  
+  
+  private static int maxComments;
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -38,11 +40,24 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
+    String maxCommentsString = request.getParameter("numcomments");
+
+    // Convert the input to an int.
+    try {
+        maxComments = Integer.parseInt(maxCommentsString);
+    } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " +  maxCommentsString);
+    }
+
     ArrayList<String> comments = new ArrayList<>();
 
+    int currentCount = 0;
+
     for (Entity entity : results.asIterable()) {
+      if (currentCount >= maxComments) break;
       String message = (String) entity.getProperty("message");
       comments.add(message);
+      currentCount++;
     }
 
     Gson gson = new Gson();
@@ -59,13 +74,14 @@ public class DataServlet extends HttpServlet {
     String comment = request.getParameter("comment");
     String fullComment = new String();
     long timestamp = System.currentTimeMillis();
+    
 
     // Builds comment message
-    if (name == null || name.equals("")) {
+    if (name.isEmpty()) {
       name = "Anonymous";
     }
 
-    if (email == null || email.equals("")) {
+    if (email.isEmpty()) {
         fullComment = name + " said: " + comment;
     } else {
         fullComment = name + " at " + email + " said: " + comment;
