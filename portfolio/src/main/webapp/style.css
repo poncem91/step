@@ -165,6 +165,21 @@ a:hover{
     color: orangered;
 }
 
+/* Comment Formm Styling */
+label {
+    display: block;
+}
+input, textarea {
+  width: 300px;
+}
+#submit {
+    width: 100px;
+}
+#comments-history {
+    font-style: italic;
+    padding-bottom: 1em;
+}
+
 /* Lightbox */
 #lightbox {
     display: none;

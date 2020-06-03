@@ -22,25 +22,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns Hello Message */
-@WebServlet("/data")
+@WebServlet("/comments")
 public class DataServlet extends HttpServlet {
     
-  private ArrayList<String> helloMessages;
-
-  @Override
-  public void init() {
-    helloMessages = new ArrayList<>();
-    helloMessages.add("Hello there!");
-    helloMessages.add("Hope your day is going well!");
-    helloMessages.add("Gday to you!");
-  }
+  private final ArrayList<String> commentsHistory = new ArrayList<>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Gson gson = new Gson();
-    String json = gson.toJson(helloMessages);
+    String json = gson.toJson(commentsHistory);
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the input from the form.
+    String name = request.getParameter("name");
+    String email = request.getParameter("email");
+    String comment = request.getParameter("comment");
+    String fullComment = new String();
+
+    // Builds comment message
+    if (name == null || name.equals("")) {
+      name = "Anonymous";
+    }
+
+    if (email == null || email.equals("")) {
+        fullComment = name + " says: " + comment;
+    } else {
+        fullComment = name + " at " + email + " says: " + comment;
+    }
+
+    commentsHistory.add(fullComment);
+    
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
 
 }
