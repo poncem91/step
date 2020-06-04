@@ -41,7 +41,7 @@ public class DataServlet extends HttpServlet {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    String maxCommentsString = request.getParameter("numcomments");
+    String maxCommentsString = request.getParameter("maxcomments");
 
     // Convert the input to an int.
     try {

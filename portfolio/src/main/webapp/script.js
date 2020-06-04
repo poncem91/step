@@ -118,8 +118,8 @@ document.addEventListener('keydown', function(event) {
 });
 
 /** Fetches Comments with specified Max Number of Comments */
-function getComments(numComments) {
-  const url = "/comments?numcomments=" + numComments;
+function getComments(maxComments) {
+  const url = "/comments?maxcomments=" + maxComments;
   fetch(url).then(response => response.json()).then((comments) => {
     const commentsHistory = document.getElementById('comments-history');
     commentsHistory.innerHTML = '';
