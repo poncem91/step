@@ -177,8 +177,34 @@ input, textarea {
     width: 100px;
 }
 #comments-history {
-    font-style: italic;
     padding-bottom: 1em;
+}
+
+/* Comment History Styling */
+.comment {
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.comment-row {
+    display: flex;
+    padding: 10px 20px;
+    background-color: rgb(211, 211, 211);
+}
+.comment-header {
+    background-color: rgb(102, 102, 102);
+    color: white;
+}
+.comment-email {
+    text-decoration: none;
+    color: white;
+}
+.comment-timestamp {
+    width: 50%;
+    text-align: right;
+}
+.comment-name {
+    width: 50%;
 }
 
 /* Lightbox */

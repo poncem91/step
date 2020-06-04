@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,11 +53,17 @@ public class DataServlet extends HttpServlet {
 
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(maxComments));
 
-    ArrayList<String> comments = new ArrayList<>();
+    ArrayList<Comment> comments = new ArrayList<>();
 
     for (Entity entity : results) {
+      long id = entity.getKey().getId();
+      String name = (String) entity.getProperty("name");
+      String email = (String) entity.getProperty("email");
       String message = (String) entity.getProperty("message");
-      comments.add(message);
+      long timestamp = (long) entity.getProperty("timestamp");
+
+      Comment comment = new Comment(id, name, email, message, timestamp);
+      comments.add(comment);
     }
 
     Gson gson = new Gson();
@@ -71,23 +78,16 @@ public class DataServlet extends HttpServlet {
     String name = request.getParameter("name");
     String email = request.getParameter("email");
     String comment = request.getParameter("comment");
-    String fullComment = new String();
     long timestamp = System.currentTimeMillis();
     
-
-    // Builds comment message
     if (name.isEmpty()) {
       name = "Anonymous";
     }
 
-    if (email.isEmpty()) {
-        fullComment = name + " said: " + comment;
-    } else {
-        fullComment = name + " at " + email + " said: " + comment;
-    }
-
     Entity commentsEntity = new Entity("Comment");
-    commentsEntity.setProperty("message", fullComment);
+    commentsEntity.setProperty("name", name);
+    commentsEntity.setProperty("email", email);
+    commentsEntity.setProperty("message", comment);
     commentsEntity.setProperty("timestamp", timestamp);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
