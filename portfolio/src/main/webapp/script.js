@@ -130,3 +130,11 @@ function getComments(numComments) {
     })
   });
 }
+
+/** Deletes Comments */
+function deleteComments() {
+  const request = new Request("/delete-comments", {method: 'POST'});
+  fetch(request).then(() => {
+    getComments(0);
+  });
+}
