@@ -115,14 +115,20 @@ public class DataServlet extends HttpServlet {
 
     } else {
 
+        long id;
+
         try {
-            long id = Long.parseLong(request.getParameter("id"));
-            Key commentEntityKey = KeyFactory.createKey("Comment", id);
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.delete(commentEntityKey);
+            id = Long.parseLong(request.getParameter("id"));
     
         } catch (NumberFormatException e) {
             System.err.println("Could not convert to long");
+            id = -1;
+        }
+
+        if (id > 0) {
+            Key commentEntityKey = KeyFactory.createKey("Comment", id);
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.delete(commentEntityKey);
         }
     
     }

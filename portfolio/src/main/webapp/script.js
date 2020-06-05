@@ -182,15 +182,6 @@ function constructCommentNode(comment) {
     return commentNode;
 }
 
-/** Deletes Comments 
-function deleteComments() {
-    const request = new Request("/comments?id=all", {method: 'DELETE'});
-    fetch(request).then(() => {
-        const maxComments = document.getElementById('maxcomments').value;
-        getComments(maxComments);
-    });
-} */
-
 /** Deletes Comments */
 function deleteComments(id) {
     const url = "/comments?id=" + id;
