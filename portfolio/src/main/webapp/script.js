@@ -117,10 +117,12 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/** Fetches Comments with specified Max Number of Comments */
-function getComments(maxComments) {
+/** Fetches Comments with specified Max Number of Comments and Filter by Name */
+function getComments(maxComments, filterInput) {
 
-    const url = "/comments?maxcomments=" + maxComments;
+    console.log(filterInput);
+
+    const url = "/comments?maxcomments=" + maxComments + "&filter=" + filterInput;
 
     fetch(url).then(response => response.json()).then((comments) => {
 
@@ -190,4 +192,13 @@ function deleteComments(commentId) {
         const maxComments = document.getElementById('maxcomments').value;
         getComments(maxComments)
     })
+}
+
+/** Sets Filter on Comments */
+function setFilter() {
+    const maxComments = document.getElementById('maxcomments').value;
+    var filterInputNode = document.getElementById('filter-input');
+    const filterInputValue = filterInputNode.value.toLowerCase();
+    filterInputNode.setAttribute("data-filter-input", filterInputValue);
+    getComments(maxComments, filterInputValue);
 }

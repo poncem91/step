@@ -41,8 +41,23 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    String filter = request.getParameter("filter");
+    System.out.println(filter);
+
+    Query query;
+
+    if (filter.isEmpty()) {
+        System.out.println("filter is empty");
+        query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    } else {
+        System.out.println("filter is NOT empty");
+        Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
+        query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING).setFilter(queryFilter);
+    }
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    System.out.println("out of if-else");
 
     String maxCommentsString = request.getParameter("maxcomments");
 
@@ -78,13 +93,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
-    String name = request.getParameter("name");
+    String name = request.getParameter("name").toLowerCase();
     String email = request.getParameter("email");
     String comment = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
     
     if (name.isEmpty()) {
-      name = "Anonymous";
+      name = "anonymous";
     }
 
     Entity commentsEntity = new Entity("Comment");

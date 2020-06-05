@@ -179,7 +179,7 @@ input, textarea {
 #comments-history {
     padding-bottom: 1em;
 }
-#filtercomments {
+#filter-input {
     width: auto;
 }
 #display-options {
@@ -219,6 +219,7 @@ input, textarea {
 }
 .comment-name {
     width: 80%;
+    text-transform: capitalize;
 }
 .comment-delete {
     margin-top: -0.5em;
