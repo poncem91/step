@@ -172,6 +172,9 @@ function fetchCommentsHelper(comment) {
     commentNode.appendChild(headerNode);
     commentNode.appendChild(messageNode);
 
+    commentNode.setAttribute("id", comment.id);
+    commentNode.setAttribute("onclick", "deleteSingleComment(this.id)");
+
     return commentNode;
 }
 
@@ -179,6 +182,18 @@ function fetchCommentsHelper(comment) {
 function deleteComments() {
   const request = new Request("/delete-comments", {method: 'POST'});
   fetch(request).then(() => {
-    getComments(0);
+    const maxComments = document.getElementById('maxcomments').value;
+    getComments(maxComments);
   });
+}
+
+/** Deletes Single Comment */
+function deleteSingleComment(id) {
+    const url = "/delete-comment?id=" + id;
+    const request = new Request(url, {method: 'POST'});
+    fetch(request).then(() => {
+        const maxComments = document.getElementById('maxcomments').value;
+        getComments(maxComments)
+    })
+    console.log("This deletes comment with id: " + id);
 }
