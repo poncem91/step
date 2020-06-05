@@ -126,8 +126,8 @@ function getComments(maxComments) {
 
         const commentsHistory = document.getElementById('comments-history');
         commentsHistory.innerHTML = '';
-
-        comments.map(comments => constructCommentNode(comments)).forEach(node => commentsHistory.appendChild(node));
+        
+        comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
 
     });
 }
@@ -164,8 +164,8 @@ function constructCommentNode(comment) {
     var deleteLinkNode = document.createElement('a');
     deleteLinkNode.classList.add("comment-delete-link");
     deleteLinkNode.innerText = "×";
-    deleteLinkNode.setAttribute("id", comment.id);
-    deleteLinkNode.setAttribute("onclick", "deleteComments(this.id)")
+    deleteLinkNode.setAttribute("data-comment-id", comment.id);
+    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId)");
     deleteNode.appendChild(deleteLinkNode);
 
     headerNode.appendChild(nameNode);
@@ -182,18 +182,9 @@ function constructCommentNode(comment) {
     return commentNode;
 }
 
-/** Deletes Comments 
-function deleteComments() {
-    const request = new Request("/comments?id=all", {method: 'DELETE'});
-    fetch(request).then(() => {
-        const maxComments = document.getElementById('maxcomments').value;
-        getComments(maxComments);
-    });
-} */
-
 /** Deletes Comments */
-function deleteComments(id) {
-    const url = "/comments?id=" + id;
+function deleteComments(commentId) {
+    const url = "/comments?id=" + commentId;
     const request = new Request(url, {method: 'DELETE'});
     fetch(request).then(() => {
         const maxComments = document.getElementById('maxcomments').value;
