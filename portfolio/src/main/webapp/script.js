@@ -164,8 +164,8 @@ function constructCommentNode(comment) {
     var deleteLinkNode = document.createElement('a');
     deleteLinkNode.classList.add("comment-delete-link");
     deleteLinkNode.innerText = "×";
-    deleteLinkNode.setAttribute("id", comment.id);
-    deleteLinkNode.setAttribute("onclick", "deleteComments(this.id)")
+    deleteLinkNode.setAttribute("data-comment-id", comment.id);
+    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId)");
     deleteNode.appendChild(deleteLinkNode);
 
     headerNode.appendChild(nameNode);
@@ -183,8 +183,8 @@ function constructCommentNode(comment) {
 }
 
 /** Deletes Comments */
-function deleteComments(id) {
-    const url = "/comments?id=" + id;
+function deleteComments(commentId) {
+    const url = "/comments?id=" + commentId;
     const request = new Request(url, {method: 'DELETE'});
     fetch(request).then(() => {
         const maxComments = document.getElementById('maxcomments').value;
