@@ -126,11 +126,9 @@ function getComments(maxComments) {
 
     const commentsHistory = document.getElementById('comments-history');
     commentsHistory.innerHTML = '';
+    
+    comments.map(comments => constructCommentNode(comments)).forEach(node => commentsHistory.appendChild(node));
 
-    comments.forEach(comment => {
-        var commentNode = constructCommentNode(comment);
-        commentsHistory.appendChild(commentNode);
-    })
   });
 }
 
