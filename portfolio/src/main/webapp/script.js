@@ -177,8 +177,9 @@ function fetchCommentsHelper(comment) {
 
 /** Deletes Comments */
 function deleteComments() {
-  const request = new Request("/delete-comments", {method: 'POST'});
+  const request = new Request("/comments", {method: 'DELETE'});
   fetch(request).then(() => {
-    getComments(0);
+    const maxComments = document.getElementById('maxcomments').value;
+    getComments(maxComments)
   });
 }

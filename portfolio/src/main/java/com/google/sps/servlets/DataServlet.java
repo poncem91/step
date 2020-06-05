@@ -49,7 +49,7 @@ public class DataServlet extends HttpServlet {
         maxComments = Integer.parseInt(maxCommentsString);
     } catch (NumberFormatException e) {
         System.err.println("Could not convert to int: " +  maxCommentsString);
-        maxComments = 0;
+        maxComments = 5;
     }
 
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(maxComments));
@@ -94,6 +94,24 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
     
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    Query query = new Query("Comment");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+        datastore.delete(entity.getKey());
+    }
+    
+    response.setContentType("text/html");
+    response.getWriter().println();
+
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
   }
