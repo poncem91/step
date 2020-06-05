@@ -119,16 +119,57 @@ document.addEventListener('keydown', function(event) {
 
 /** Fetches Comments with specified Max Number of Comments */
 function getComments(maxComments) {
+
   const url = "/comments?maxcomments=" + maxComments;
+
   fetch(url).then(response => response.json()).then((comments) => {
+
     const commentsHistory = document.getElementById('comments-history');
     commentsHistory.innerHTML = '';
-    comments.forEach(message => {
-        var listNode = document.createElement('li');
-        listNode.innerText = message;
-        commentsHistory.appendChild(listNode);
-    })
+    
+    comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
+
   });
+}
+
+
+/** Fetch Comments Helper Function that constructs commentNodes */
+function constructCommentNode(comment) {
+
+    var commentNode = document.createElement('div');
+    commentNode.classList.add("comment");
+
+    var headerNode = document.createElement('div');
+    headerNode.classList.add("comment-row", "comment-header");
+
+    var nameNode = document.createElement('div');
+    nameNode.classList.add("comment-name");
+
+    if (comment.email === "") {
+        nameNode.innerText = comment.name;
+    } else {
+        var emailNode = document.createElement('a');
+        emailNode.classList.add("comment-email");
+        emailNode.innerText = comment.name;
+        emailNode.href = "mailto:" + comment.email;
+        nameNode.appendChild(emailNode);
+    }
+
+    var timestampNode = document.createElement('div');
+    timestampNode.classList.add("comment-timestamp");
+    timestampNode.innerText = comment.datetime;
+
+    headerNode.appendChild(nameNode);
+    headerNode.appendChild(timestampNode);
+
+    var messageNode = document.createElement('div');
+    messageNode.classList.add("comment-row");
+    messageNode.innerText = comment.message;
+
+    commentNode.appendChild(headerNode);
+    commentNode.appendChild(messageNode);
+
+    return commentNode;
 }
 
 /** Deletes Comments */
