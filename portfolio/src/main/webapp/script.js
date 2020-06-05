@@ -117,10 +117,12 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/** Fetches Comments */
-function getComments() {
-  fetch('/comments').then(response => response.json()).then((comments) => {
+/** Fetches Comments with specified Max Number of Comments */
+function getComments(maxComments) {
+  const url = "/comments?maxcomments=" + maxComments;
+  fetch(url).then(response => response.json()).then((comments) => {
     const commentsHistory = document.getElementById('comments-history');
+    commentsHistory.innerHTML = '';
     comments.forEach(message => {
         var listNode = document.createElement('li');
         listNode.innerText = message;

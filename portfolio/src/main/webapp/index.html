@@ -8,7 +8,7 @@
     <!--Social Media Icons -->
     <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
   </head>
-  <body onload="getComments()">
+  <body onload="getComments(5)">
 
     <!-- Sticky Navbar -->
     <div id="navbar">
@@ -159,6 +159,16 @@
           </p>
           <p>
               <input id="submit" type="submit" />
+          </p>
+          <p>
+              <label for="maxcomments">Choose the Number of Comments to Display Below:</label>
+              <select name="maxcomments" id="maxcomments" onchange="getComments(this.value);">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="15">15</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+              </select>
           </p>
           </form>
           <div id="comments-history"></div>

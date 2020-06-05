@@ -19,8 +19,10 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.gson.Gson;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,18 +31,31 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that allows users to add comments and returns comment history  */
 @WebServlet("/comments")
-public class DataServlet extends HttpServlet {
-    
+public class DataServlet extends HttpServlet {  
+  
+  private static int maxComments;
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+
+    String maxCommentsString = request.getParameter("maxcomments");
+
+    // Convert the input to an int.
+    try {
+        maxComments = Integer.parseInt(maxCommentsString);
+    } catch (NumberFormatException e) {
+        System.err.println("Could not convert to int: " +  maxCommentsString);
+        maxComments = 5;
+    }
+
+    List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(maxComments));
 
     ArrayList<String> comments = new ArrayList<>();
 
-    for (Entity entity : results.asIterable()) {
+    for (Entity entity : results) {
       String message = (String) entity.getProperty("message");
       comments.add(message);
     }
@@ -59,13 +74,14 @@ public class DataServlet extends HttpServlet {
     String comment = request.getParameter("comment");
     String fullComment = new String();
     long timestamp = System.currentTimeMillis();
+    
 
     // Builds comment message
-    if (name == null || name.equals("")) {
+    if (name.isEmpty()) {
       name = "Anonymous";
     }
 
-    if (email == null || email.equals("")) {
+    if (email.isEmpty()) {
         fullComment = name + " said: " + comment;
     } else {
         fullComment = name + " at " + email + " said: " + comment;
