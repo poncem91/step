@@ -128,7 +128,7 @@ function getComments(maxComments) {
     commentsHistory.innerHTML = '';
 
     comments.forEach(comment => {
-        var commentNode = fetchCommentsHelper(comment);
+        var commentNode = constructCommentNode(comment);
         commentsHistory.appendChild(commentNode);
     })
   });
@@ -136,14 +136,13 @@ function getComments(maxComments) {
 
 
 /** Fetch Comments Helper Function that constructs commentNodes */
-function fetchCommentsHelper(comment) {
+function constructCommentNode(comment) {
 
     var commentNode = document.createElement('div');
     commentNode.classList.add("comment");
 
     var headerNode = document.createElement('div');
-    headerNode.classList.add("comment-row");
-    headerNode.classList.add("comment-header");
+    headerNode.classList.add("comment-row", "comment-header");
 
     var nameNode = document.createElement('div');
     nameNode.classList.add("comment-name");
@@ -160,7 +159,7 @@ function fetchCommentsHelper(comment) {
 
     var timestampNode = document.createElement('div');
     timestampNode.classList.add("comment-timestamp");
-    timestampNode.innerText = comment.timestamp;
+    timestampNode.innerText = comment.datetime;
 
     headerNode.appendChild(nameNode);
     headerNode.appendChild(timestampNode);
