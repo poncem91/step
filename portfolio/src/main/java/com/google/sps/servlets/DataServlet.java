@@ -98,5 +98,23 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/index.html");
   }
 
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    Query query = new Query("Comment");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+        datastore.delete(entity.getKey());
+    }
+    
+    response.setContentType("text/html");
+    response.getWriter().println();
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
 
 }
