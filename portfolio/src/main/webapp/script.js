@@ -120,8 +120,6 @@ document.addEventListener('keydown', function(event) {
 /** Fetches Comments with specified Max Number of Comments and Filter by Name */
 function getComments(maxComments, filterInput) {
 
-    console.log(filterInput);
-
     const url = "/comments?maxcomments=" + maxComments + "&filter=" + filterInput;
 
     fetch(url).then(response => response.json()).then((comments) => {

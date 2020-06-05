@@ -42,22 +42,17 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     String filter = request.getParameter("filter");
-    System.out.println(filter);
 
     Query query;
 
     if (filter.isEmpty()) {
-        System.out.println("filter is empty");
         query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
     } else {
-        System.out.println("filter is NOT empty");
         Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
         query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING).setFilter(queryFilter);
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    System.out.println("out of if-else");
 
     String maxCommentsString = request.getParameter("maxcomments");
 
