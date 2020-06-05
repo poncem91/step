@@ -16,15 +16,15 @@
  * Adds a random Arlo message to the page.
  */
 function addRandomArloMessage() {
-  const arloMessages =
-      ['Woof!', 'Woof, Woof!', 'Squirrel?!', 'Treats?!', 'Park?!', 'Zzzzz'];
+    const arloMessages =
+        ['Woof!', 'Woof, Woof!', 'Squirrel?!', 'Treats?!', 'Park?!', 'Zzzzz'];
 
-  // Pick a random greeting.
-  const arloMessage = arloMessages[Math.floor(Math.random() * arloMessages.length)];
+    // Pick a random greeting.
+    const arloMessage = arloMessages[Math.floor(Math.random() * arloMessages.length)];
 
-  // Add it to the page.
-  const arloTalksContainer = document.getElementById('arlo-talks-container');
-  arloTalksContainer.innerText = arloMessage;
+    // Add it to the page.
+    const arloTalksContainer = document.getElementById('arlo-talks-container');
+    arloTalksContainer.innerText = arloMessage;
 }
 
 /**
@@ -33,17 +33,17 @@ function addRandomArloMessage() {
 window.onscroll = function() {shrinkNavBar()};
 
 function shrinkNavBar() {
-  if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
-    document.getElementById("navbar").style.paddingTop = "15px";
-    document.getElementById("navbar").style.paddingBottom = "15px";
-    document.getElementById("navbar-title").style.fontSize = "18px";
-    document.getElementById("navbar-right").style.top = "0px";
-  } else {
-    document.getElementById("navbar").style.paddingTop = "35px";
-    document.getElementById("navbar").style.paddingBottom = "35px";
-    document.getElementById("navbar-title").style.fontSize = "30px";
-    document.getElementById("navbar-right").style.top = "10px";
-  }
+    if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
+        document.getElementById("navbar").style.paddingTop = "15px";
+        document.getElementById("navbar").style.paddingBottom = "15px";
+        document.getElementById("navbar-title").style.fontSize = "18px";
+        document.getElementById("navbar-right").style.top = "0px";
+    } else {
+        document.getElementById("navbar").style.paddingTop = "35px";
+        document.getElementById("navbar").style.paddingBottom = "35px";
+        document.getElementById("navbar-title").style.fontSize = "30px";
+        document.getElementById("navbar-right").style.top = "10px";
+    }
 }
 
 /**
@@ -52,7 +52,7 @@ function shrinkNavBar() {
 function scrollToSection(sectionId) {
     let goToLocation;
 
-	// this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
+    // this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
     if (sectionId == 'aboutme') {
         goToLocation = - window.pageYOffset;
     } else {
@@ -63,7 +63,7 @@ function scrollToSection(sectionId) {
         top: goToLocation,
         behavior: 'smooth'
     });
-	return false;
+    return false;
 }
 
 /**
@@ -83,12 +83,12 @@ function openLightbox(picIndex) {
 // Helper function to show specific picture in lightbox
 function showPic(picIndex) {
 
-  for (var i = 0; i < picsArray.length; i++) {
-      picsArray[i].style.display = "none";
-  }
+    for (var i = 0; i < picsArray.length; i++) {
+        picsArray[i].style.display = "none";
+    }
 
-  picsArray[picIndex].style.display = "block";
-  currPic = picIndex;
+    picsArray[picIndex].style.display = "block";
+    currPic = picIndex;
 
 }
 
@@ -101,7 +101,7 @@ function changePic(byIndex) {
 
 // Closes lightbox
 function closeLightbox() {
-  document.getElementById("lightbox").style.display = "none";
+    document.getElementById("lightbox").style.display = "none";
 }
 
 // Keyboard functionality
@@ -120,16 +120,16 @@ document.addEventListener('keydown', function(event) {
 /** Fetches Comments with specified Max Number of Comments */
 function getComments(maxComments) {
 
-  const url = "/comments?maxcomments=" + maxComments;
+    const url = "/comments?maxcomments=" + maxComments;
 
-  fetch(url).then(response => response.json()).then((comments) => {
+    fetch(url).then(response => response.json()).then((comments) => {
 
-    const commentsHistory = document.getElementById('comments-history');
-    commentsHistory.innerHTML = '';
-    
-    comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
+        const commentsHistory = document.getElementById('comments-history');
+        commentsHistory.innerHTML = '';
+        
+        comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
 
-  });
+    });
 }
 
 
@@ -159,8 +159,18 @@ function constructCommentNode(comment) {
     timestampNode.classList.add("comment-timestamp");
     timestampNode.innerText = comment.datetime;
 
+    var deleteNode = document.createElement('div');
+    deleteNode.classList.add("comment-delete");
+    var deleteLinkNode = document.createElement('a');
+    deleteLinkNode.classList.add("comment-delete-link");
+    deleteLinkNode.innerText = "×";
+    deleteLinkNode.setAttribute("data-comment-id", comment.id);
+    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId)");
+    deleteNode.appendChild(deleteLinkNode);
+
     headerNode.appendChild(nameNode);
     headerNode.appendChild(timestampNode);
+    headerNode.appendChild(deleteNode);
 
     var messageNode = document.createElement('div');
     messageNode.classList.add("comment-row");
@@ -173,10 +183,11 @@ function constructCommentNode(comment) {
 }
 
 /** Deletes Comments */
-function deleteComments() {
-  const request = new Request("/comments", {method: 'DELETE'});
-  fetch(request).then(() => {
-    const maxComments = document.getElementById('maxcomments').value;
-    getComments(maxComments)
-  });
+function deleteComments(commentId) {
+    const url = "/comments?id=" + commentId;
+    const request = new Request(url, {method: 'DELETE'});
+    fetch(request).then(() => {
+        const maxComments = document.getElementById('maxcomments').value;
+        getComments(maxComments)
+    })
 }
