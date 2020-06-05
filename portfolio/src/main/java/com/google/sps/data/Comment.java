@@ -30,10 +30,10 @@ public final class Comment {
     this.name = name;
     this.email = email;
     this.message = message;
-    this.datetime = this.getTimestamp(timestamp);
+    this.datetime = this.getDatetime(timestamp);
   }
 
-  public String getTimestamp(long inputTimestamp) {
+  public String getDatetime(long inputTimestamp) {
       Timestamp timestamp = new Timestamp(inputTimestamp);
       SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
       return timestampFormat.format(timestamp);
