@@ -200,11 +200,23 @@ input, textarea {
     color: white;
 }
 .comment-timestamp {
-    width: 50%;
-    text-align: right;
+    width: 19%;
+    text-align: center;
 }
 .comment-name {
-    width: 50%;
+    width: 80%;
+}
+.comment-delete {
+    margin-top: -0.5em;
+    margin-right: -0.5em;
+    padding-left: 0.3em;
+}
+
+.comment-delete-link {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* Lightbox */

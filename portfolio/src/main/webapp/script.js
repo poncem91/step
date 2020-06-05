@@ -159,8 +159,18 @@ function constructCommentNode(comment) {
     timestampNode.classList.add("comment-timestamp");
     timestampNode.innerText = comment.datetime;
 
+    var deleteNode = document.createElement('div');
+    deleteNode.classList.add("comment-delete");
+    var deleteLinkNode = document.createElement('a');
+    deleteLinkNode.classList.add("comment-delete-link");
+    deleteLinkNode.innerText = "×";
+    deleteLinkNode.setAttribute("id", comment.id);
+    deleteLinkNode.setAttribute("onclick", "deleteComments(this.id)")
+    deleteNode.appendChild(deleteLinkNode);
+
     headerNode.appendChild(nameNode);
     headerNode.appendChild(timestampNode);
+    headerNode.appendChild(deleteNode);
 
     var messageNode = document.createElement('div');
     messageNode.classList.add("comment-row");
@@ -168,9 +178,6 @@ function constructCommentNode(comment) {
 
     commentNode.appendChild(headerNode);
     commentNode.appendChild(messageNode);
-
-    commentNode.setAttribute("id", comment.id);
-    commentNode.setAttribute("onclick", "deleteComments(this.id)");
 
     return commentNode;
 }
