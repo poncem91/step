@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,7 @@ public class DataServlet extends HttpServlet {
         maxComments = Integer.parseInt(maxCommentsString);
     } catch (NumberFormatException e) {
         System.err.println("Could not convert to int: " +  maxCommentsString);
-        maxComments = 0;
+        maxComments = 5;
     }
 
     List<Entity> results = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(maxComments));
@@ -94,6 +96,40 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
     
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
+  }
+
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    if (request.getParameter("id").equals("all")) {
+        
+        Query query = new Query("Comment");
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+
+        for (Entity entity : results.asIterable()) {
+            datastore.delete(entity.getKey());
+        }
+
+    } else {
+
+        try {
+            long id = Long.parseLong(request.getParameter("id"));
+            Key commentEntityKey = KeyFactory.createKey("Comment", id);
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.delete(commentEntityKey);
+    
+        } catch (NumberFormatException e) {
+            System.err.println("Could not convert to long");
+        }
+    
+    }
+    
+    response.setContentType("text/html");
+    response.getWriter().println();
+
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
   }

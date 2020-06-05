@@ -16,15 +16,15 @@
  * Adds a random Arlo message to the page.
  */
 function addRandomArloMessage() {
-  const arloMessages =
-      ['Woof!', 'Woof, Woof!', 'Squirrel?!', 'Treats?!', 'Park?!', 'Zzzzz'];
+    const arloMessages =
+        ['Woof!', 'Woof, Woof!', 'Squirrel?!', 'Treats?!', 'Park?!', 'Zzzzz'];
 
-  // Pick a random greeting.
-  const arloMessage = arloMessages[Math.floor(Math.random() * arloMessages.length)];
+    // Pick a random greeting.
+    const arloMessage = arloMessages[Math.floor(Math.random() * arloMessages.length)];
 
-  // Add it to the page.
-  const arloTalksContainer = document.getElementById('arlo-talks-container');
-  arloTalksContainer.innerText = arloMessage;
+    // Add it to the page.
+    const arloTalksContainer = document.getElementById('arlo-talks-container');
+    arloTalksContainer.innerText = arloMessage;
 }
 
 /**
@@ -33,17 +33,17 @@ function addRandomArloMessage() {
 window.onscroll = function() {shrinkNavBar()};
 
 function shrinkNavBar() {
-  if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
-    document.getElementById("navbar").style.paddingTop = "15px";
-    document.getElementById("navbar").style.paddingBottom = "15px";
-    document.getElementById("navbar-title").style.fontSize = "18px";
-    document.getElementById("navbar-right").style.top = "0px";
-  } else {
-    document.getElementById("navbar").style.paddingTop = "35px";
-    document.getElementById("navbar").style.paddingBottom = "35px";
-    document.getElementById("navbar-title").style.fontSize = "30px";
-    document.getElementById("navbar-right").style.top = "10px";
-  }
+    if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
+        document.getElementById("navbar").style.paddingTop = "15px";
+        document.getElementById("navbar").style.paddingBottom = "15px";
+        document.getElementById("navbar-title").style.fontSize = "18px";
+        document.getElementById("navbar-right").style.top = "0px";
+    } else {
+        document.getElementById("navbar").style.paddingTop = "35px";
+        document.getElementById("navbar").style.paddingBottom = "35px";
+        document.getElementById("navbar-title").style.fontSize = "30px";
+        document.getElementById("navbar-right").style.top = "10px";
+    }
 }
 
 /**
@@ -52,7 +52,7 @@ function shrinkNavBar() {
 function scrollToSection(sectionId) {
     let goToLocation;
 
-	// this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
+    // this assures that when scrolling to aboutme section it scrolls all the way up so the navbar expands to its initial size
     if (sectionId == 'aboutme') {
         goToLocation = - window.pageYOffset;
     } else {
@@ -63,7 +63,7 @@ function scrollToSection(sectionId) {
         top: goToLocation,
         behavior: 'smooth'
     });
-	return false;
+    return false;
 }
 
 /**
@@ -83,12 +83,12 @@ function openLightbox(picIndex) {
 // Helper function to show specific picture in lightbox
 function showPic(picIndex) {
 
-  for (var i = 0; i < picsArray.length; i++) {
-      picsArray[i].style.display = "none";
-  }
+    for (var i = 0; i < picsArray.length; i++) {
+        picsArray[i].style.display = "none";
+    }
 
-  picsArray[picIndex].style.display = "block";
-  currPic = picIndex;
+    picsArray[picIndex].style.display = "block";
+    currPic = picIndex;
 
 }
 
@@ -101,7 +101,7 @@ function changePic(byIndex) {
 
 // Closes lightbox
 function closeLightbox() {
-  document.getElementById("lightbox").style.display = "none";
+    document.getElementById("lightbox").style.display = "none";
 }
 
 // Keyboard functionality
@@ -120,30 +120,27 @@ document.addEventListener('keydown', function(event) {
 /** Fetches Comments with specified Max Number of Comments */
 function getComments(maxComments) {
 
-  const url = "/comments?maxcomments=" + maxComments;
+    const url = "/comments?maxcomments=" + maxComments;
 
-  fetch(url).then(response => response.json()).then((comments) => {
+    fetch(url).then(response => response.json()).then((comments) => {
 
-    const commentsHistory = document.getElementById('comments-history');
-    commentsHistory.innerHTML = '';
+        const commentsHistory = document.getElementById('comments-history');
+        commentsHistory.innerHTML = '';
 
-    comments.forEach(comment => {
-        var commentNode = fetchCommentsHelper(comment);
-        commentsHistory.appendChild(commentNode);
-    })
-  });
+        comments.map(comments => constructCommentNode(comments)).forEach(node => commentsHistory.appendChild(node));
+
+    });
 }
 
 
 /** Fetch Comments Helper Function that constructs commentNodes */
-function fetchCommentsHelper(comment) {
+function constructCommentNode(comment) {
 
     var commentNode = document.createElement('div');
     commentNode.classList.add("comment");
 
     var headerNode = document.createElement('div');
-    headerNode.classList.add("comment-row");
-    headerNode.classList.add("comment-header");
+    headerNode.classList.add("comment-row", "comment-header");
 
     var nameNode = document.createElement('div');
     nameNode.classList.add("comment-name");
@@ -160,7 +157,7 @@ function fetchCommentsHelper(comment) {
 
     var timestampNode = document.createElement('div');
     timestampNode.classList.add("comment-timestamp");
-    timestampNode.innerText = comment.timestamp;
+    timestampNode.innerText = comment.datetime;
 
     headerNode.appendChild(nameNode);
     headerNode.appendChild(timestampNode);
@@ -173,27 +170,26 @@ function fetchCommentsHelper(comment) {
     commentNode.appendChild(messageNode);
 
     commentNode.setAttribute("id", comment.id);
-    commentNode.setAttribute("onclick", "deleteSingleComment(this.id)");
+    commentNode.setAttribute("onclick", "deleteComments(this.id)");
 
     return commentNode;
 }
 
-/** Deletes Comments */
+/** Deletes Comments 
 function deleteComments() {
-  const request = new Request("/delete-comments", {method: 'POST'});
-  fetch(request).then(() => {
-    const maxComments = document.getElementById('maxcomments').value;
-    getComments(maxComments);
-  });
-}
+    const request = new Request("/comments?id=all", {method: 'DELETE'});
+    fetch(request).then(() => {
+        const maxComments = document.getElementById('maxcomments').value;
+        getComments(maxComments);
+    });
+} */
 
-/** Deletes Single Comment */
-function deleteSingleComment(id) {
-    const url = "/delete-comment?id=" + id;
-    const request = new Request(url, {method: 'POST'});
+/** Deletes Comments */
+function deleteComments(id) {
+    const url = "/comments?id=" + id;
+    const request = new Request(url, {method: 'DELETE'});
     fetch(request).then(() => {
         const maxComments = document.getElementById('maxcomments').value;
         getComments(maxComments)
     })
-    console.log("This deletes comment with id: " + id);
 }
