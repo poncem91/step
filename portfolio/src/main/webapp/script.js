@@ -126,8 +126,8 @@ function getComments(maxComments) {
 
         const commentsHistory = document.getElementById('comments-history');
         commentsHistory.innerHTML = '';
-
-        comments.map(comments => constructCommentNode(comments)).forEach(node => commentsHistory.appendChild(node));
+        
+        comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
 
     });
 }
