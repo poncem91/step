@@ -43,13 +43,11 @@ public class DataServlet extends HttpServlet {
 
     String filter = request.getParameter("filter");
 
-    Query query;
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    if (filter.isEmpty()) {
-        query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
-    } else {
+    if (!filter.equals("undefined") && !filter.isEmpty()) {
         Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
-        query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING).setFilter(queryFilter);
+        query.setFilter(queryFilter);
     }
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -88,13 +86,13 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
-    String name = request.getParameter("name").toLowerCase();
+    String name = request.getParameter("name");
     String email = request.getParameter("email");
     String comment = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
     
     if (name.isEmpty()) {
-      name = "anonymous";
+      name = "Anonymous";
     }
 
     Entity commentsEntity = new Entity("Comment");
