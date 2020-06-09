@@ -235,6 +235,9 @@ input, textarea {
     text-decoration: none;
     cursor: pointer;
 }
+#delete-all {
+    margin-bottom: 2em;
+}
 
 /* Lightbox */
 #lightbox {
@@ -305,6 +308,11 @@ figcaption {
     color: white;
     text-align: center;
     margin-top: 0;
+}
+
+#map {
+    height: 300px;
+    display: none;
 }
 
 /* Responsive navbar to screen width */

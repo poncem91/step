@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var mapskey = config.MAPS_KEY;
+
 /**
  * Adds a random Arlo message to the page.
  */
@@ -214,4 +216,21 @@ function getFilter() {
 /** Gets and returns value in maxComments input field */
 function getMaxComments() {
     return document.getElementById('maxcomments').value;
+}
+
+function loadMaps(){
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src =  "https://maps.googleapis.com/maps/api/js?key=" + mapskey + "&callback=initMap";
+    script.defer = true;
+    script.async = true;
+
+    window.initMap = function() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 1
+        });
+    }
+    document.head.appendChild(script);
+    document.getElementById('map').style.display = "block";
 }
