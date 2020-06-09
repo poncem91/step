@@ -41,7 +41,15 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+    String filter = request.getParameter("filter");
+
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+
+    if (!filter.isEmpty()) {
+        Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
+        query.setFilter(queryFilter);
+    }
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     String maxCommentsString = request.getParameter("maxcomments");

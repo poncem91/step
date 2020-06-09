@@ -117,10 +117,14 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-/** Fetches Comments with specified Max Number of Comments */
-function getComments(maxComments) {
+/** Fetches Comments with specified Max Number of Comments and Filter by Name */
+function getComments(maxComments, filterInput) {
 
-    const url = "/comments?maxcomments=" + maxComments;
+    if (filterInput === undefined) {
+        filterInput = "";
+    }
+
+    const url = "/comments?maxcomments=" + maxComments + "&filter=" + filterInput;
 
     fetch(url).then(response => response.json()).then((comments) => {
 
@@ -133,7 +137,7 @@ function getComments(maxComments) {
 }
 
 
-/** Fetch Comments Helper Function that constructs commentNodes */
+/** Helper Function that constructs commentNodes */
 function constructCommentNode(comment) {
 
     var commentNode = document.createElement('div');
@@ -165,7 +169,7 @@ function constructCommentNode(comment) {
     deleteLinkNode.classList.add("comment-delete-link");
     deleteLinkNode.innerText = "×";
     deleteLinkNode.setAttribute("data-comment-id", comment.id);
-    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId)");
+    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
     deleteNode.appendChild(deleteLinkNode);
 
     headerNode.appendChild(nameNode);
@@ -183,11 +187,20 @@ function constructCommentNode(comment) {
 }
 
 /** Deletes Comments */
-function deleteComments(commentId) {
+function deleteComments(commentId, filterInput) {
     const url = "/comments?id=" + commentId;
     const request = new Request(url, {method: 'DELETE'});
     fetch(request).then(() => {
-        const maxComments = document.getElementById('maxcomments').value;
-        getComments(maxComments)
+        getComments(getMaxComments(), filterInput)
     })
+}
+
+/** Gets and returns value in Filter Input field */
+function getFilter() {
+    return document.getElementById('filter-input').value;
+}
+
+/** Gets and returns value in maxComments input field */
+function getMaxComments() {
+    return document.getElementById('maxcomments').value;
 }

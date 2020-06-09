@@ -179,6 +179,20 @@ input, textarea {
 #comments-history {
     padding-bottom: 1em;
 }
+#filter-input {
+    width: auto;
+}
+#display-options {
+    display: flex;
+}
+#maxcomments-div{
+    padding-right: 2em;
+    width: 50%;
+}
+#filtercomments-div{
+    width: 50%;
+    text-align: right;
+}
 
 /* Comment History Styling */
 .comment {
