@@ -74,8 +74,9 @@ public class DataServlet extends HttpServlet {
       String email = (String) entity.getProperty("email");
       String message = (String) entity.getProperty("message");
       long timestamp = (long) entity.getProperty("timestamp");
+      String userId =  (String) entity.getProperty("userId");
 
-      Comment comment = new Comment(id, name, email, message, timestamp);
+      Comment comment = new Comment(id, name, email, message, timestamp, userId);
       comments.add(comment);
     }
 
@@ -119,12 +120,18 @@ public class DataServlet extends HttpServlet {
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("Comment");
+
+    UserService userService = UserServiceFactory.getUserService();
+    String userId = userService.getCurrentUser().getUserId();
     
     if (request.getParameter("id").equals("all")) {
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
-            datastore.delete(entity.getKey());
+            String commentUserId = (String) entity.getProperty("userId");
+            if (userId.equals(commentUserId)){
+                datastore.delete(entity.getKey());
+            }
         }
 
 
@@ -148,20 +155,14 @@ public class DataServlet extends HttpServlet {
             PreparedQuery results = datastore.prepare(query);
             Entity entity = results.asSingleEntity();
 
-            UserService userService = UserServiceFactory.getUserService();
-            String userId = userService.getCurrentUser().getUserId();
             String commentUserId = (String) entity.getProperty("userId");
             
 
             // Only allows comments written by user logged in to be deleted
             if (userId.equals(commentUserId)){
-                System.out.println("you are the correct user");
                 datastore.delete(commentEntityKey);
-            } else {
-                System.out.println("you can't delete this");
-            }
+            } 
         }
-    
     }
 
     response.setContentType("text/html;");

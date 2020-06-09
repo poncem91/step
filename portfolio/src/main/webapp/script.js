@@ -167,10 +167,17 @@ function constructCommentNode(comment) {
     deleteNode.classList.add("comment-delete");
     var deleteLinkNode = document.createElement('a');
     deleteLinkNode.classList.add("comment-delete-link");
-    deleteLinkNode.innerText = "×";
+
+
+    const userId = document.getElementById("contactme").dataset.userId;
+    if (comment.userId == userId) {
+        deleteLinkNode.innerText = "×";
+        deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
+    } else {
+        deleteLinkNode.innerText = " ";
+    }
     deleteLinkNode.setAttribute("data-comment-id", comment.id);
-    deleteLinkNode.setAttribute("data-user-id", comment.userId);
-    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
+    
     deleteNode.appendChild(deleteLinkNode);
 
     headerNode.appendChild(nameNode);

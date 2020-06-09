@@ -128,7 +128,7 @@
               
               <dt>Foundant Technologies</dt>
               <dt class="workposition">Spring 2020 - Client Services Intern</dt>
-              <dd>Assist clients that use Foundant’s grant and scholarship management software or fund accounting software with any technical support questions or issues they might have.</dd>
+              <dd>Assist clients that use Foundant's grant and scholarship management software or fund accounting software with any technical support questions or issues they might have.</dd>
               
               <dt>Silver Lining Entertainment</dt>
               <dt class="workposition">October 2016 to November 2018 - Talent Manager's Assistant</dt>
@@ -140,20 +140,26 @@
       </section>
 
       <!-- Contact Me Section -->
-      <section id="contactme">
+
+      <%@ page import = "com.google.appengine.api.users.UserService, com.google.appengine.api.users.UserServiceFactory" %>
+      <%
+          UserService userService = UserServiceFactory.getUserService();
+          String userId = "";
+          if (userService.isUserLoggedIn()) {
+            userId = userService.getCurrentUser().getUserId();
+          }
+      %>
+      <section id="contactme" data-user-id="<%=userId%>">
           <h1>Contact Me</h1>
           <p>Please feel free to reach out to me through any of the below platforms or leave a comment below:</p>
 
-          <%@ page import = "com.google.appengine.api.users.UserService, com.google.appengine.api.users.UserServiceFactory" %>
           <%
-          UserService userService = UserServiceFactory.getUserService();
           if (userService.isUserLoggedIn()) {
             String urlToRedirectToAfterUserLogsOut = "/";
             String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-            String userId = userService.getCurrentUser().getUserId();
 
           %>
-          <p>Hello <%=userService.getCurrentUser().getEmail()%> (To logout <a href="<%=logoutUrl%>">click here</a>)</p>
+          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>, to logout <a href="<%=logoutUrl%>">click here</a>)</p>
 
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
@@ -174,7 +180,7 @@
               String urlToRedirectToAfterUserLogsIn = "/";
               String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
           %>
-          <p>***YOU MUST LOGIN BEFORE SUBMITTING A COMMENT. <a href="<%=loginUrl%>">CLICK HERE TO LOGIN.</a></p>
+          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Click here to login.</a>)</p>
           <%
           }
           %>
@@ -198,7 +204,14 @@
               </div>
           </p>
           <div id="comments-history"></div>
-          <button onclick="deleteComments('all');">Delete All Comments</button>
+
+          <%
+          if (userService.isUserLoggedIn()) {
+          %>
+          <button onclick="deleteComments('all');">Delete All Your Comments</button>
+          <%
+          }
+          %>
 
           <!-- Social Media Sub-Section -->
           <div class="row">

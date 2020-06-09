@@ -193,6 +193,9 @@ input, textarea {
     width: 50%;
     text-align: right;
 }
+.login-messages {
+    font-style: italic;
+}
 
 /* Comment History Styling */
 .comment {
