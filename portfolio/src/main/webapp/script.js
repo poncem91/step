@@ -68,45 +68,41 @@ function scrollToSection(sectionId) {
     return false;
 }
 
-/**
- * Lightbox Gallery Implementation
- */
+
+// LIGHTBOX --------------------------------------------------------------------
 
 // keeps track of current picture currently opened and of array of Pics
 var currPic;
 const picsArray = document.getElementsByClassName("lightbox-pic");
 
-// Displays Lightbox open user click
+/** Displays Lightbox open user click */
 function openLightbox(picIndex) {
     document.getElementById("lightbox").style.display = "flex";
     showPic(picIndex);
 }
 
-// Helper function to show specific picture in lightbox
+/** Helper function to show specific picture in lightbox */
 function showPic(picIndex) {
-
     for (var i = 0; i < picsArray.length; i++) {
         picsArray[i].style.display = "none";
     }
-
     picsArray[picIndex].style.display = "block";
     currPic = picIndex;
-
 }
 
-// Previous and Next picture functionality
+/** Previous and Next picture functionality */
 function changePic(byIndex) {
     currPic += byIndex;
     currPic = (currPic + picsArray.length) % picsArray.length;
     showPic(currPic);
 }
 
-// Closes lightbox
+/** Closes lightbox */
 function closeLightbox() {
     document.getElementById("lightbox").style.display = "none";
 }
 
-// Keyboard functionality
+/** Keyboard functionality */
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape' || event.keyCode === 27) {
         closeLightbox();
@@ -118,6 +114,9 @@ document.addEventListener('keydown', function(event) {
         changePic(-1);
     }
 });
+
+
+// COMMENTS --------------------------------------------------------------------
 
 /** Fetches Comments with specified Max Number of Comments and Filter by Name */
 function getComments(maxComments, filterInput) {
@@ -134,10 +133,8 @@ function getComments(maxComments, filterInput) {
         commentsHistory.innerHTML = '';
         
         comments.map(constructCommentNode).forEach(node => commentsHistory.appendChild(node));
-
     });
 }
-
 
 /** Helper Function that constructs commentNodes */
 function constructCommentNode(comment) {
@@ -169,7 +166,6 @@ function constructCommentNode(comment) {
     deleteNode.classList.add("comment-delete");
     var deleteLinkNode = document.createElement('a');
     deleteLinkNode.classList.add("comment-delete-link");
-
 
     const userId = document.getElementById("contactme").dataset.userId;
     if (comment.userId == userId) {
@@ -205,7 +201,6 @@ function deleteComments(commentId, filterInput) {
         console.log("im inside the fetch");
         getComments(getMaxComments(), filterInput)
     })
-
 }
 
 /** Gets and returns value in Filter Input field */
@@ -218,6 +213,13 @@ function getMaxComments() {
     return document.getElementById('maxcomments').value;
 }
 
+
+// MAPS --------------------------------------------------------------------
+
+let map;
+let editMarker;
+
+/** Function that dynamically adds the maps API and load the map */
 function loadMaps(){
     var script = document.createElement('script');
     script.type = 'text/javascript';
@@ -227,10 +229,70 @@ function loadMaps(){
 
     window.initMap = function() {
         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
+          center: {lat: 40, lng: 40},
           zoom: 1
         });
+        
+        map.addListener('click', (event) => {
+            addMarker(event.latLng.lat(), event.latLng.lng());
+        });
+
+        fetchMarkers();
     }
     document.head.appendChild(script);
     document.getElementById('map').style.display = "block";
+}
+
+/** Lets user click on the map to add markers */
+function addMarker(lat, lng) {
+
+  if (editMarker) {
+    editMarker.setMap(null);
+  }
+
+  editMarker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+
+  const infoWindow = new google.maps.InfoWindow({content: constructAddMarkerWindow(lat, lng)});
+
+  // If the user closes the info window, remove the marker.
+  google.maps.event.addListener(infoWindow, 'closeclick', () => {
+    editMarker.setMap(null);
+  });
+
+  infoWindow.open(map, editMarker);
+}
+
+/** Builds and returns Add button node */
+function constructAddMarkerWindow(lat, lng) {
+  const addButton = document.createElement('button');
+  addButton.innerText = "Add";
+
+  addButton.onclick = () => {
+    sendMarker(lat, lng);
+    displayMarker(lat, lng);
+    editMarker.setMap(null);
+  };
+  return addButton;
+}
+
+/** Sends marker to servlet */
+function sendMarker(lat, lng) {
+  const params = new URLSearchParams();
+  params.append('lat', lat);
+  params.append('lng', lng);
+
+  fetch('/markers', {method: 'POST', body: params});
+}
+
+/** Helper function that displays markers with specified lat and lng */
+function displayMarker(lat, lng) {
+    const marker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+}
+
+/** Fetches markers from servlet to display */
+function fetchMarkers(lat, lng) {
+  fetch('/markers').then(response => response.json()).then((markers) => {
+    markers.forEach((marker) => {
+        displayMarker(marker.lat, marker.lng)});
+    });
 }

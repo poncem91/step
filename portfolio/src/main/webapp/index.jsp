@@ -159,7 +159,7 @@
             String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
           %>
-          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>, to logout <a href="<%=logoutUrl%>">click here</a>)</p>
+          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>.<a href="<%=logoutUrl%>">Logout.</a>)</p>
 
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
@@ -180,7 +180,7 @@
               String urlToRedirectToAfterUserLogsIn = "/";
               String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
           %>
-          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Click here to login.</a>)</p>
+          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Login.</a>)</p>
           <%
           }
           %>
