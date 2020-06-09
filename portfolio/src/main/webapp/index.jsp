@@ -136,7 +136,7 @@
               
               <dt>USC Annenberg - Media, Diversity, & Social Change Initiative</dt>
               <dt class="workposition">Summer 2015 - Student Research Assistant</dt>
-              <dd>Analyzed and quantified TV & Film content metrics for the 2014-2015 study: ‘Inclusion or Invisibility? The Comprehensive Annenberg Report on Diversity in Entertainment’ as seen <a href="https://bit.ly/2oBKDUr">here.</a></dd>
+              <dd>Analyzed and quantified TV & Film content metrics for the 2014-2015 study: 'Inclusion or Invisibility? The Comprehensive Annenberg Report on Diversity in Entertainment' as seen <a href="https://bit.ly/2oBKDUr">here.</a></dd>
       </section>
 
       <!-- Contact Me Section -->
@@ -149,12 +149,14 @@
           UserService userService = UserServiceFactory.getUserService();
           if (userService.isUserLoggedIn()) {
             String urlToRedirectToAfterUserLogsOut = "/";
-            String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);    
+            String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+            String userId = userService.getCurrentUser().getUserId();
+
           %>
           <p>Hello <%=userService.getCurrentUser().getEmail()%> (To logout <a href="<%=logoutUrl%>">click here</a>)</p>
 
           <!-- Comments Sub-Section -->
-          <form action="/comments" method="POST">
+          <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
           <p>
               <label for="name">Name:</label>
               <input id="name" type="text" name="name" placeholder="Optional">

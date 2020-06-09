@@ -169,6 +169,7 @@ function constructCommentNode(comment) {
     deleteLinkNode.classList.add("comment-delete-link");
     deleteLinkNode.innerText = "×";
     deleteLinkNode.setAttribute("data-comment-id", comment.id);
+    deleteLinkNode.setAttribute("data-user-id", comment.userId);
     deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
     deleteNode.appendChild(deleteLinkNode);
 
@@ -190,9 +191,12 @@ function constructCommentNode(comment) {
 function deleteComments(commentId, filterInput) {
     const url = "/comments?id=" + commentId;
     const request = new Request(url, {method: 'DELETE'});
+    console.log("im after request const");
     fetch(request).then(() => {
+        console.log("im inside the fetch");
         getComments(getMaxComments(), filterInput)
     })
+
 }
 
 /** Gets and returns value in Filter Input field */

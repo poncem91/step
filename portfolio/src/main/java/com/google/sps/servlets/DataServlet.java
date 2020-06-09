@@ -88,6 +88,9 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
+    UserService userService = UserServiceFactory.getUserService();
+
+    String userId = userService.getCurrentUser().getUserId();
     String name = request.getParameter("name");
     String email = userService.getCurrentUser().getEmail();
     String comment = request.getParameter("comment");
@@ -102,6 +105,7 @@ public class DataServlet extends HttpServlet {
     commentsEntity.setProperty("email", email);
     commentsEntity.setProperty("message", comment);
     commentsEntity.setProperty("timestamp", timestamp);
+    commentsEntity.setProperty("userId", userId);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
@@ -112,16 +116,17 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Comment");
+    
     if (request.getParameter("id").equals("all")) {
-        
-        Query query = new Query("Comment");
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
             datastore.delete(entity.getKey());
         }
+
 
     } else {
 
@@ -137,18 +142,33 @@ public class DataServlet extends HttpServlet {
 
         if (id > 0) {
             Key commentEntityKey = KeyFactory.createKey("Comment", id);
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.delete(commentEntityKey);
+
+            Query.Filter queryFilter = new Query.FilterPredicate("__key__", Query.FilterOperator.EQUAL, commentEntityKey);
+            query.setFilter(queryFilter);
+            PreparedQuery results = datastore.prepare(query);
+            Entity entity = results.asSingleEntity();
+
+            UserService userService = UserServiceFactory.getUserService();
+            String userId = userService.getCurrentUser().getUserId();
+            String commentUserId = (String) entity.getProperty("userId");
+            
+
+            // Only allows comments written by user logged in to be deleted
+            if (userId.equals(commentUserId)){
+                System.out.println("you are the correct user");
+                datastore.delete(commentEntityKey);
+            } else {
+                System.out.println("you can't delete this");
+            }
         }
     
     }
-    
-    response.setContentType("text/html");
-    response.getWriter().println();
+
+    response.setContentType("text/html;");
 
     // Redirect back to the jsp page.
+    response.getWriter().println();
     response.sendRedirect("/");
   }
-
 
 }
