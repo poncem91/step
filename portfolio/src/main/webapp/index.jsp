@@ -144,15 +144,20 @@
           <h1>Contact Me</h1>
           <p>Please feel free to reach out to me through any of the below platforms or leave a comment below:</p>
 
+          <%@ page import = "com.google.appengine.api.users.UserService, com.google.appengine.api.users.UserServiceFactory" %>
+          <%
+          UserService userService = UserServiceFactory.getUserService();
+          if (userService.isUserLoggedIn()) {
+            String urlToRedirectToAfterUserLogsOut = "/";
+            String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);    
+          %>
+          <p>Hello <%=userService.getCurrentUser().getEmail()%> (To logout <a href="<%=logoutUrl%>">click here</a>)</p>
+
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST">
           <p>
               <label for="name">Name:</label>
               <input id="name" type="text" name="name" placeholder="Optional">
-          </p>
-          <p>
-              <label for="email">Email:</label>
-              <input id="email" type="email" name="email" placeholder="Optional">
           </p>
           <p>
               <label for="comment">Comment:</label>
@@ -162,6 +167,15 @@
               <input id="submit" type="submit" />
           </p>
           </form>
+          <%
+          } else {
+              String urlToRedirectToAfterUserLogsIn = "/";
+              String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+          %>
+          <p>***YOU MUST LOGIN BEFORE SUBMITTING A COMMENT. <a href="<%=loginUrl%>">CLICK HERE TO LOGIN.</a></p>
+          <%
+          }
+          %>
           <p>
               <div id="display-options">
                   <div id="maxcomments-div">

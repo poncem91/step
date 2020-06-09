@@ -22,6 +22,8 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class DataServlet extends HttpServlet {
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    if (!filter.equals("undefined") && !filter.isEmpty()) {
+    if (!filter.isEmpty()) {
         Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
         query.setFilter(queryFilter);
     }
@@ -87,7 +89,7 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
     String name = request.getParameter("name");
-    String email = request.getParameter("email");
+    String email = userService.getCurrentUser().getEmail();
     String comment = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
     
