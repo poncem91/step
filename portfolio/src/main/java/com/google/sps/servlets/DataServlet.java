@@ -106,8 +106,8 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
     
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
+    // Redirect back to the jsp page.
+    response.sendRedirect("/");
   }
 
   @Override
@@ -146,8 +146,8 @@ public class DataServlet extends HttpServlet {
     response.setContentType("text/html");
     response.getWriter().println();
 
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
+    // Redirect back to the jsp page.
+    response.sendRedirect("/");
   }
 
 
