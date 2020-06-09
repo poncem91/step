@@ -45,7 +45,7 @@ public class DataServlet extends HttpServlet {
 
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    if (!filter.equals("undefined") && !filter.isEmpty()) {
+    if (!filter.isEmpty()) {
         Query.Filter queryFilter = new Query.FilterPredicate("name", Query.FilterOperator.EQUAL, filter);
         query.setFilter(queryFilter);
     }
