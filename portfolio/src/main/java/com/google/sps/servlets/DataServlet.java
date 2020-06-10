@@ -25,6 +25,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.sps.data.Comment;
@@ -71,12 +72,11 @@ public class DataServlet extends HttpServlet {
     for (Entity entity : results) {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
-      String email = (String) entity.getProperty("email");
       String message = (String) entity.getProperty("message");
       long timestamp = (long) entity.getProperty("timestamp");
       String userId =  (String) entity.getProperty("userId");
 
-      Comment comment = new Comment(id, name, email, message, timestamp, userId);
+      Comment comment = new Comment(id, name, message, timestamp, userId);
       comments.add(comment);
     }
 
@@ -111,29 +111,26 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
     
-    // Redirect back to the jsp page.
+    // Redirect back to home page.
     response.sendRedirect("/");
   }
 
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("Comment");
-
     UserService userService = UserServiceFactory.getUserService();
     String userId = userService.getCurrentUser().getUserId();
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Comment");
     
     if (request.getParameter("id").equals("all")) {
+        query.setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
-            String commentUserId = (String) entity.getProperty("userId");
-            if (userId.equals(commentUserId)){
-                datastore.delete(entity.getKey());
-            }
+            datastore.delete(entity.getKey());
         }
-
 
     } else {
 
@@ -148,28 +145,23 @@ public class DataServlet extends HttpServlet {
         }
 
         if (id > 0) {
+
             Key commentEntityKey = KeyFactory.createKey("Comment", id);
 
-            Query.Filter queryFilter = new Query.FilterPredicate("__key__", Query.FilterOperator.EQUAL, commentEntityKey);
+            Query.CompositeFilter queryFilter = new Query.CompositeFilter(Query.CompositeFilterOperator.AND, Arrays
+            .asList(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId), new Query
+            .FilterPredicate("__key__", Query.FilterOperator.EQUAL, commentEntityKey)));
+
             query.setFilter(queryFilter);
             PreparedQuery results = datastore.prepare(query);
             Entity entity = results.asSingleEntity();
-
-            String commentUserId = (String) entity.getProperty("userId");
-            
-
-            // Only allows comments written by user logged in to be deleted
-            if (userId.equals(commentUserId)){
-                datastore.delete(commentEntityKey);
-            } 
+            datastore.delete(entity.getKey());
         }
     }
 
     response.setContentType("text/html;");
 
-    // Redirect back to the jsp page.
     response.getWriter().println();
-    response.sendRedirect("/");
   }
 
 }

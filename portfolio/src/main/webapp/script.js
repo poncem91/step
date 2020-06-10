@@ -148,16 +148,7 @@ function constructCommentNode(comment) {
 
     var nameNode = document.createElement('div');
     nameNode.classList.add("comment-name");
-
-    if (comment.email === "") {
-        nameNode.innerText = comment.name;
-    } else {
-        var emailNode = document.createElement('a');
-        emailNode.classList.add("comment-email");
-        emailNode.innerText = comment.name;
-        emailNode.href = "mailto:" + comment.email;
-        nameNode.appendChild(emailNode);
-    }
+    nameNode.innerText = comment.name;
 
     var timestampNode = document.createElement('div');
     timestampNode.classList.add("comment-timestamp");
@@ -169,7 +160,7 @@ function constructCommentNode(comment) {
     deleteLinkNode.classList.add("comment-delete-link");
 
 
-    const userId = document.getElementById("contactme").dataset.userId;
+    const userId = document.body.dataset.userId;
     if (comment.userId == userId) {
         deleteLinkNode.innerText = "×";
         deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
@@ -198,9 +189,7 @@ function constructCommentNode(comment) {
 function deleteComments(commentId, filterInput) {
     const url = "/comments?id=" + commentId;
     const request = new Request(url, {method: 'DELETE'});
-    console.log("im after request const");
     fetch(request).then(() => {
-        console.log("im inside the fetch");
         getComments(getMaxComments(), filterInput)
     })
 

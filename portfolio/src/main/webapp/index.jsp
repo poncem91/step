@@ -9,7 +9,16 @@
     <!--Social Media Icons -->
     <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
   </head>
-  <body onload="getComments(5)">
+  <%@ page import = "com.google.appengine.api.users.UserService" %>
+  <%@ page import = "com.google.appengine.api.users.UserServiceFactory" %>
+  <%
+        UserService userService = UserServiceFactory.getUserService();
+        String userId = "";
+        if (userService.isUserLoggedIn()) {
+        userId = userService.getCurrentUser().getUserId();
+        }
+  %>
+  <body onload="getComments(5)" data-user-id="<%=userId%>">
 
     <!-- Sticky Navbar -->
     <div id="navbar">
@@ -140,16 +149,7 @@
       </section>
 
       <!-- Contact Me Section -->
-
-      <%@ page import = "com.google.appengine.api.users.UserService, com.google.appengine.api.users.UserServiceFactory" %>
-      <%
-          UserService userService = UserServiceFactory.getUserService();
-          String userId = "";
-          if (userService.isUserLoggedIn()) {
-            userId = userService.getCurrentUser().getUserId();
-          }
-      %>
-      <section id="contactme" data-user-id="<%=userId%>">
+      <section id="contactme">
           <h1>Contact Me</h1>
           <p>Please feel free to reach out to me through any of the below platforms or leave a comment below:</p>
 
@@ -159,7 +159,7 @@
             String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
           %>
-          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>, to logout <a href="<%=logoutUrl%>">click here</a>)</p>
+          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>. <a href="<%=logoutUrl%>">Logout.</a>)</p>
 
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
@@ -180,7 +180,7 @@
               String urlToRedirectToAfterUserLogsIn = "/";
               String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
           %>
-          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Click here to login.</a>)</p>
+          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Login.</a>)</p>
           <%
           }
           %>
