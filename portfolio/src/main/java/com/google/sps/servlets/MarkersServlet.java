@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.sps.data.Marker;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,8 +48,9 @@ public class MarkersServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       double lat = (double) entity.getProperty("lat");
       double lng = (double) entity.getProperty("lng");
+      String userId = (String) entity.getProperty("userId");
 
-      Marker marker = new Marker(lat, lng);
+      Marker marker = new Marker(lat, lng, userId);
       markers.add(marker);
     }
 
@@ -59,16 +62,18 @@ public class MarkersServlet extends HttpServlet {
   /** Receives and stores a new marker. */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
+    UserService userService = UserServiceFactory.getUserService();
+
+    String userId = userService.getCurrentUser().getUserId();
     double lat = Double.parseDouble(request.getParameter("lat"));
     double lng = Double.parseDouble(request.getParameter("lng"));
-
-    Marker marker = new Marker(lat, lng);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity entity = new Entity("Marker");
-    entity.setProperty("lat", marker.getLatitude());
-    entity.setProperty("lng", marker.getLongitude());
+    entity.setProperty("lat", lat);
+    entity.setProperty("lng", lng);
+    entity.setProperty("userId", userId);
 
     datastore.put(entity);
   }

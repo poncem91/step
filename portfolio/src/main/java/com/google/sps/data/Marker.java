@@ -20,18 +20,12 @@ public final class Marker {
 
   private final double lat;
   private final double lng;
+  private final String userId;
 
-  public Marker(double lat, double lng) {
+  public Marker(double lat, double lng, String userId) {
     this.lat = lat;
     this.lng = lng;
-  }
-
-  public double getLatitude() {
-      return this.lat;
-  }
-
-  public double getLongitude() {
-      return this.lng;
+    this.userId = userId;
   }
 
 }

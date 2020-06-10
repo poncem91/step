@@ -219,8 +219,85 @@ function loadMaps(){
 
     window.initMap = function() {
         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40, lng: 40},
-          zoom: 1
+          center: {lat: 20, lng: 10},
+          zoom: 2,
+          styles:   [
+                        {
+                            "featureType": "landscape.man_made",
+                            "elementType": "geometry.fill",
+                            "stylers": [
+                                {
+                                    "color": "#fafafa"
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "landscape.natural",
+                            "elementType": "geometry.fill",
+                            "stylers": [
+                                {
+                                    "color": "#d3d3d3"
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "poi",
+                            "elementType": "geometry.fill",
+                            "stylers": [
+                                {
+                                    "color": "#d3d3d3"
+                                },
+                                {
+                                    "lightness": -15
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "poi",
+                            "elementType": "labels.text.fill",
+                            "stylers": [
+                                {
+                                    "color": "#4c4c4c"
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "road.highway",
+                            "elementType": "geometry.fill",
+                            "stylers": [
+                                {
+                                    "color": "#ececec"
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "road.highway",
+                            "elementType": "geometry.stroke",
+                            "stylers": [
+                                {
+                                    "color": "#c8c8c8"
+                                }
+                            ]
+                        },
+                        {
+                            "featureType": "water",
+                            "elementType": "geometry.fill",
+                            "stylers": [
+                                {
+                                    "color": "#fbfbfb" 
+                                }
+                            ]   
+                        },
+                        {
+                            "featureType": "water",
+                            "elementType": "labels.text",
+                            "stylers": [
+                                {
+                                    "color": "#4c4c4c" 
+                                }
+                            ]   
+                        }
+                    ]
         });
         
         map.addListener('click', (event) => {
@@ -259,7 +336,7 @@ function constructAddMarkerWindow(lat, lng) {
 
   addButton.onclick = () => {
     sendMarker(lat, lng);
-    displayMarker(lat, lng);
+    displayMarker(lat, lng, document.body.dataset.userId);
     editMarker.setMap(null);
   };
   return addButton;
@@ -275,14 +352,18 @@ function sendMarker(lat, lng) {
 }
 
 /** Helper function that displays markers with specified lat and lng */
-function displayMarker(lat, lng) {
-    const marker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+function displayMarker(lat, lng, userId) {
+    const marker = new google.maps.Marker({
+            position: {lat: lat, lng: lng},
+            map: map,
+            userId: userId});
+    console.log(marker.get('userId'));
 }
 
 /** Fetches markers from servlet to display */
 function fetchMarkers(lat, lng) {
   fetch('/markers').then(response => response.json()).then((markers) => {
     markers.forEach((marker) => {
-        displayMarker(marker.lat, marker.lng)});
+        displayMarker(marker.lat, marker.lng, marker.userId)});
     });
 }
