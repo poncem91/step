@@ -10,7 +10,16 @@
     <!--Social Media Icons -->
     <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
   </head>
-  <body onload="getComments(5); loadMaps()">
+  <%@ page import = "com.google.appengine.api.users.UserService" %>
+  <%@ page import = "com.google.appengine.api.users.UserServiceFactory" %>
+  <%
+        UserService userService = UserServiceFactory.getUserService();
+        String userId = "";
+        if (userService.isUserLoggedIn()) {
+        userId = userService.getCurrentUser().getUserId();
+        }
+  %>
+  <body onload="getComments(5); loadMaps()" data-user-id="<%=userId%>">
 
     <!-- Sticky Navbar -->
     <div id="navbar">
@@ -141,15 +150,7 @@
       </section>
 
       <!-- Contact Me Section -->
-      <%@ page import = "com.google.appengine.api.users.UserService, com.google.appengine.api.users.UserServiceFactory" %>
-      <%
-          UserService userService = UserServiceFactory.getUserService();
-          String userId = "";
-          if (userService.isUserLoggedIn()) {
-            userId = userService.getCurrentUser().getUserId();
-          }
-      %>
-      <section id="contactme" data-user-id="<%=userId%>">
+      <section id="contactme">
           <h1>Contact Me</h1>
           <p>Please feel free to connect with me through any of the below social platforms, by leaving a comment below, or by sharing where you are visiting from using the map below!</p>
 
@@ -159,7 +160,7 @@
             String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
           %>
-          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>.<a href="<%=logoutUrl%>">Logout.</a>)</p>
+          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>. <a href="<%=logoutUrl%>">Logout.</a>)</p>
 
           <!-- Comments Sub-Section -->
           <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
