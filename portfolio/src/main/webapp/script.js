@@ -209,8 +209,10 @@ function getMaxComments() {
 let map;
 let editMarker;
 
-// map to keep track of markers displayed so they can later be referenced to be removed
+// map to keep track of markers and infowindows displayed so they can later be referenced to be removed
 let markersMap = new Map();
+let infoWindows = [];
+let infoWindowsOpened = 0;
 
 /** Function that dynamically adds the maps API and load the map */
 function loadMaps(){
@@ -303,13 +305,17 @@ function loadMaps(){
                     ]
         });
         
-        // Lets logged users add markers
-        if (document.body.dataset.userLogged === "true") {
-                map.addListener('click', (event) => {
-                    addMarker(event.latLng.lat(), event.latLng.lng());
+        // Closes all infowindows or allows logged users to add markers when clicking on map
+        map.addListener('click', (event) => {
+            if ((document.body.dataset.userLogged === "true") && (infoWindowsOpened === 0)) {
+                addMarker(event.latLng.lat(), event.latLng.lng());
+            }  else {
+                infoWindows.forEach(infoWindow => {
+                    infoWindow.close();
                 });
-        }
-
+                infoWindowsOpened = 0;
+            }
+        });
         fetchMarkers();
     }
     document.head.appendChild(script);
@@ -375,8 +381,12 @@ function displayMarker(lat, lng, userId, id) {
         id: id});
     markersMap.set(id, marker);
 
-    var geocoder = new google.maps.Geocoder;
     var infoWindow = new google.maps.InfoWindow;
+    infoWindow.addListener('closeclick', () => {
+        infoWindowsOpened--;
+    })
+
+    var geocoder = new google.maps.Geocoder;
     marker.addListener('click', () => {
         openInfoWindow(map, marker, infoWindow, geocoder);
     });
@@ -384,28 +394,53 @@ function displayMarker(lat, lng, userId, id) {
 
 /** Builds and Opens Info Window */
 function openInfoWindow(map, marker, infoWindow, geocoder) {
-    var latlng = marker.get('position');
+    const latlng = marker.get('position');
     const textNode = document.createElement('div');
     const windowNode = document.createElement('div');
 
+    // Retrieves general location address and updates textNode
     geocoder.geocode({'location': latlng}, function(results, status) {
         if (status == 'OK') {
             if (results[0]) {
-                textNode.innerText = results[0].formatted_address;
+                var result = results[0]
+                var city = "";
+                var state = "";
+                var country = "";
+                for (var i = 0; i < result.address_components.length; i++) {
+                    var component = result.address_components[i];
+                    if ((city == "") && (component.types.indexOf("political") >= 0 )) {
+                        city = component.long_name + ", ";
+                    }
+                    if ((state == "") && (component.types.indexOf("administrative_area_level_1") >= 0 )) {
+                        state = component.short_name + ", ";
+                    }
+                    if ((country == "") && (component.types.indexOf("country") >= 0 )) {
+                        country = component.long_name;
+                    }
+                }
+                textNode.innerText = city + state + country;
             }
         }
     });
 
     windowNode.appendChild(textNode);
 
+    // gives users who created the marker the option to delete it
     if (marker.get('userId') == document.body.dataset.userId) {
         const deleteButton = document.createElement('button');
         deleteButton.innerText = "Delete";
+        deleteButton.onclick = () => {
+            markersMap.get(marker.get('id')).setMap(null);
+            markersMap.delete(marker.get('id'));
+            deleteMarker(latlng.lat(), latlng.lng());
+        }
         windowNode.appendChild(deleteButton);
     }
     
     infoWindow.setContent(windowNode);
     infoWindow.open(map, marker);
+    infoWindows.push(infoWindow);
+    infoWindowsOpened++;
 }
 
 /** Deletes Marker */
