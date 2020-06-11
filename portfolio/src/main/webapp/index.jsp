@@ -183,7 +183,7 @@
               String urlToRedirectToAfterUserLogsIn = "/";
               String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
           %>
-          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Login.</a>)</p>
+          <p class="login-messages">(You must login before submitting a comment or adding a marker in the map. <a href="<%=loginUrl%>">Login.</a>)</p>
           <%
           }
           %>
