@@ -63,7 +63,7 @@ public class MarkersServlet extends HttpServlet {
 
   }
 
-  /** Receives and stores a new marker, then sends it back. */
+  /** Receives and stores a new marker, then sends it. */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();

@@ -375,25 +375,37 @@ function displayMarker(lat, lng, userId, id) {
         id: id});
     markersMap.set(id, marker);
 
-    if (marker.get('userId') == document.body.dataset.userId) {
-        const infoWindow = new google.maps.InfoWindow({content: constructDeleteMarkerButton(lat, lng, marker.get('id'))});
-        marker.addListener('click', () => {
-            infoWindow.open(map, marker);
-        });
-    }
+    var geocoder = new google.maps.Geocoder;
+    var infoWindow = new google.maps.InfoWindow;
+    marker.addListener('click', () => {
+        openInfoWindow(map, marker, infoWindow, geocoder);
+    });
 }
 
-/** Builds and returns Delete button node */
-function constructDeleteMarkerButton(lat, lng, id) {
-    const deleteButton = document.createElement('button');
-    deleteButton.innerText = "Delete";
+/** Builds and Opens Info Window */
+function openInfoWindow(map, marker, infoWindow, geocoder) {
+    var latlng = marker.get('position');
+    const textNode = document.createElement('div');
+    const windowNode = document.createElement('div');
 
-    deleteButton.onclick = () => {
-        markersMap.get(id).setMap(null);
-        markersMap.delete(id);
-        deleteMarker(lat, lng);
-    };
-    return deleteButton;
+    geocoder.geocode({'location': latlng}, function(results, status) {
+        if (status == 'OK') {
+            if (results[0]) {
+                textNode.innerText = results[0].formatted_address;
+            }
+        }
+    });
+
+    windowNode.appendChild(textNode);
+
+    if (marker.get('userId') == document.body.dataset.userId) {
+        const deleteButton = document.createElement('button');
+        deleteButton.innerText = "Delete";
+        windowNode.appendChild(deleteButton);
+    }
+    
+    infoWindow.setContent(windowNode);
+    infoWindow.open(map, marker);
 }
 
 /** Deletes Marker */
