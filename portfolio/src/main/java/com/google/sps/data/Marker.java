@@ -21,11 +21,13 @@ public final class Marker {
   private final double lat;
   private final double lng;
   private final String userId;
+  private final long id;
 
-  public Marker(double lat, double lng, String userId) {
+  public Marker(double lat, double lng, String userId, long id) {
     this.lat = lat;
     this.lng = lng;
     this.userId = userId;
+    this.id = id;
   }
 
 }

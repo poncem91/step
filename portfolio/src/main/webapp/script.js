@@ -209,6 +209,9 @@ function getMaxComments() {
 let map;
 let editMarker;
 
+// map to keep track of markers displayed so they can later be referenced to be removed
+let markersMap = new Map();
+
 /** Function that dynamically adds the maps API and load the map */
 function loadMaps(){
     var script = document.createElement('script');
@@ -310,60 +313,90 @@ function loadMaps(){
     document.getElementById('map').style.display = "block";
 }
 
+/** Fetches markers from servlet to display */
+function fetchMarkers() {
+    fetch('/markers').then(response => response.json()).then((markers) => {
+        markers.forEach((marker) => {
+            displayMarker(marker.lat, marker.lng, marker.userId, marker.id);
+        });
+    });
+}
+
 /** Lets user click on the map to add markers */
 function addMarker(lat, lng) {
 
-  if (editMarker) {
-    editMarker.setMap(null);
-  }
+    if (editMarker) {
+        editMarker.setMap(null);
+    }
 
-  editMarker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+    editMarker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
 
-  const infoWindow = new google.maps.InfoWindow({content: constructAddMarkerWindow(lat, lng)});
+    const infoWindow = new google.maps.InfoWindow({content: constructAddMarkerButton(lat, lng)});
 
-  // If the user closes the info window, remove the marker.
-  google.maps.event.addListener(infoWindow, 'closeclick', () => {
-    editMarker.setMap(null);
-  });
+    // If the user closes the info window, remove the marker.
+    google.maps.event.addListener(infoWindow, 'closeclick', () => {
+        editMarker.setMap(null);
+    });
 
-  infoWindow.open(map, editMarker);
+    infoWindow.open(map, editMarker);
 }
 
 /** Builds and returns Add button node */
-function constructAddMarkerWindow(lat, lng) {
-  const addButton = document.createElement('button');
-  addButton.innerText = "Add";
+function constructAddMarkerButton(lat, lng) {
+    const addButton = document.createElement('button');
+    addButton.innerText = "Add";
 
-  addButton.onclick = () => {
-    sendMarker(lat, lng);
-    displayMarker(lat, lng, document.body.dataset.userId);
-    editMarker.setMap(null);
-  };
-  return addButton;
+    addButton.onclick = () => {
+        sendMarker(lat, lng);
+        editMarker.setMap(null);
+    };
+    return addButton;
 }
 
 /** Sends marker to servlet */
 function sendMarker(lat, lng) {
-  const params = new URLSearchParams();
-  params.append('lat', lat);
-  params.append('lng', lng);
-
-  fetch('/markers', {method: 'POST', body: params});
+    const url = "/markers?lat=" + lat + "&lng=" + lng;
+    const request = new Request(url, {method: 'POST'});
+    
+    fetch(request).then((response) => response.json()).then((marker) => {
+        displayMarker(marker.lat, marker.lng, marker.userId, marker.id);
+    });
 }
 
 /** Helper function that displays markers with specified lat and lng */
-function displayMarker(lat, lng, userId) {
+function displayMarker(lat, lng, userId, id) {
     const marker = new google.maps.Marker({
-            position: {lat: lat, lng: lng},
-            map: map,
-            userId: userId});
-    console.log(marker.get('userId'));
+        position: {lat: lat, lng: lng},
+        map: map,
+        userId: userId,
+        id: id});
+    markersMap.set(id, marker);
+
+    if (marker.get('userId') == document.body.dataset.userId) {
+        const infoWindow = new google.maps.InfoWindow({content: constructDeleteMarkerButton(lat, lng, marker.get('id'))});
+        marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+        });
+    }
 }
 
-/** Fetches markers from servlet to display */
-function fetchMarkers(lat, lng) {
-  fetch('/markers').then(response => response.json()).then((markers) => {
-    markers.forEach((marker) => {
-        displayMarker(marker.lat, marker.lng, marker.userId)});
-    });
+/** Builds and returns Delete button node */
+function constructDeleteMarkerButton(lat, lng, id) {
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = "Delete";
+
+    deleteButton.onclick = () => {
+        markersMap.get(id).setMap(null);
+        markersMap.delete(id);
+        deleteMarker(lat, lng);
+    };
+    return deleteButton;
+}
+
+/** Deletes Marker */
+function deleteMarker(lat, lng) {
+    const url = "/markers?lat=" + lat + "&lng=" + lng;
+    const request = new Request(url, {method: 'DELETE'});
+    
+    fetch(request);
 }
