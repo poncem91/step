@@ -15,11 +15,13 @@
   <%
         UserService userService = UserServiceFactory.getUserService();
         String userId = "";
+        boolean userLogged = false;
         if (userService.isUserLoggedIn()) {
-        userId = userService.getCurrentUser().getUserId();
+            userId = userService.getCurrentUser().getUserId();
+            userLogged = true;
         }
   %>
-  <body onload="getComments(5); loadMaps()" data-user-id="<%=userId%>">
+  <body onload="getComments(5); loadMaps()" data-user-id="<%=userId%>" data-user-logged="<%=userLogged%>">
 
     <!-- Sticky Navbar -->
     <div id="navbar">

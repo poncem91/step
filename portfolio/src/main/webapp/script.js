@@ -303,9 +303,12 @@ function loadMaps(){
                     ]
         });
         
-        map.addListener('click', (event) => {
-            addMarker(event.latLng.lat(), event.latLng.lng());
-        });
+        // Lets logged users add markers
+        if (document.body.dataset.userLogged === "true") {
+                map.addListener('click', (event) => {
+                    addMarker(event.latLng.lat(), event.latLng.lng());
+                });
+        }
 
         fetchMarkers();
     }
@@ -313,7 +316,7 @@ function loadMaps(){
     document.getElementById('map').style.display = "block";
 }
 
-/** Fetches markers from servlet to display */
+/** Fetches markers from servlet to display on load */
 function fetchMarkers() {
     fetch('/markers').then(response => response.json()).then((markers) => {
         markers.forEach((marker) => {
@@ -363,7 +366,7 @@ function sendMarker(lat, lng) {
     });
 }
 
-/** Helper function that displays markers with specified lat and lng */
+/** Helper function that displays markers */
 function displayMarker(lat, lng, userId, id) {
     const marker = new google.maps.Marker({
         position: {lat: lat, lng: lng},
