@@ -20,12 +20,12 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.sps.data.Marker;
+import com.google.sps.data.Entities;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,17 +48,16 @@ public class MarkersServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
-        long id = entity.getKey().getId();
-        double lat = (double) entity.getProperty("lat");
-        double lng = (double) entity.getProperty("lng");
-        String userId = (String) entity.getProperty("userId");
+            long id = entity.getKey().getId();
+            double lat = (double) entity.getProperty("lat");
+            double lng = (double) entity.getProperty("lng");
+            String userId = (String) entity.getProperty("userId");
 
-        Marker marker = new Marker(lat, lng, userId, id);
-        markers.add(marker);
+            Marker marker = new Marker(lat, lng, userId, id);
+            markers.add(marker);
         }
 
         Gson gson = new Gson();
-
         response.getWriter().println(gson.toJson(markers));
 
     }
@@ -80,48 +79,31 @@ public class MarkersServlet extends HttpServlet {
         entity.setProperty("userId", userId);
 
         datastore.put(entity);
-
         long id = entity.getKey().getId();
-
         Marker marker = new Marker(lat, lng, userId, id);
 
         Gson gson = new Gson();
-
         response.getWriter().println(gson.toJson(marker));
-
     }
 
     /** Deletes Markers */
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
-        UserService userService = UserServiceFactory.getUserService();
 
-        String userId = userService.getCurrentUser().getUserId();
+        long id;
 
-        double lat = Double.parseDouble(request.getParameter("lat"));
-        double lng = Double.parseDouble(request.getParameter("lng"));
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Query query = new Query("Marker");
-        Query.CompositeFilter queryFilter = new Query.CompositeFilter(Query.CompositeFilterOperator.AND, Arrays
-                .asList(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId), new Query
-                .FilterPredicate("lat", Query.FilterOperator.EQUAL, lat), new Query
-                .FilterPredicate("lng", Query.FilterOperator.EQUAL, lng)));
-
-        query.setFilter(queryFilter);
-
-        PreparedQuery results = datastore.prepare(query);
-        Entity entity = results.asSingleEntity();
-
-        if (entity != null){
-            datastore.delete(entity.getKey());
+        try {
+            id = Long.parseLong(request.getParameter("id"));
+        } catch (NumberFormatException e) {
+            System.err.println("Could not convert to long");
+            id = -1;
         }
 
+        if (id > 0) {
+            Entities.deleteSingle(id, "Marker");
+        }
+        
         response.setContentType("text/html;");
-
         response.getWriter().println();
     }
-
 }

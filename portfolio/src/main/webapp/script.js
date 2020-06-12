@@ -339,7 +339,6 @@ function addMarker(lat, lng) {
     }
 
     editMarker = new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
-
     const infoWindow = new google.maps.InfoWindow({content: constructAddMarkerButton(lat, lng)});
 
     // If the user closes the info window, remove the marker.
@@ -384,7 +383,7 @@ function displayMarker(lat, lng, userId, id) {
     var infoWindow = new google.maps.InfoWindow;
     infoWindow.addListener('closeclick', () => {
         infoWindowsOpened--;
-    })
+    });
 
     var geocoder = new google.maps.Geocoder;
     marker.addListener('click', () => {
@@ -429,11 +428,7 @@ function openInfoWindow(map, marker, infoWindow, geocoder) {
     if (marker.get('userId') == document.body.dataset.userId) {
         const deleteButton = document.createElement('button');
         deleteButton.innerText = "Delete";
-        deleteButton.onclick = () => {
-            markersMap.get(marker.get('id')).setMap(null);
-            markersMap.delete(marker.get('id'));
-            deleteMarker(latlng.lat(), latlng.lng());
-        }
+        deleteButton.onclick = () => {deleteMarker(marker.get('id'));}
         windowNode.appendChild(deleteButton);
     }
     
@@ -443,10 +438,13 @@ function openInfoWindow(map, marker, infoWindow, geocoder) {
     infoWindowsOpened++;
 }
 
-/** Deletes Marker */
-function deleteMarker(lat, lng) {
-    const url = "/markers?lat=" + lat + "&lng=" + lng;
+/** Deletes Single Marker */
+function deleteMarker(markerId) {
+    const url = "/markers?id=" + markerId;
     const request = new Request(url, {method: 'DELETE'});
     
-    fetch(request);
+    fetch(request).then(() => {
+        markersMap.get(markerId).setMap(null);
+        markersMap.delete(markerId);
+    });
 }
