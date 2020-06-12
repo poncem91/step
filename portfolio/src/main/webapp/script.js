@@ -318,6 +318,7 @@ function loadMaps(){
         });
         fetchMarkers();
 
+        // Adds 'Delete All Your Markers' custom control to map if user is logged in
         if (document.body.dataset.userLogged === "true") {
             var deleteMarkersControlNode = document.createElement('div');
             var deleteMarkersControl = new DeleteMarkersControl(deleteMarkersControlNode);
@@ -484,5 +485,4 @@ function deleteAllMarkers() {
                 markersMap.delete(markerId);
             })
     });
-
 }
