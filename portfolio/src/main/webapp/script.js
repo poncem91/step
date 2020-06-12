@@ -317,6 +317,14 @@ function loadMaps(){
             }
         });
         fetchMarkers();
+
+        if (document.body.dataset.userLogged === "true") {
+            var deleteMarkersControlNode = document.createElement('div');
+            var deleteMarkersControl = new DeleteMarkersControl(deleteMarkersControlNode);
+            deleteMarkersControlNode.index = 1;
+            map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(deleteMarkersControlNode);
+        }
+        
     }
     document.head.appendChild(script);
     document.getElementById('map').style.display = "block";
@@ -447,4 +455,34 @@ function deleteMarker(markerId) {
         markersMap.get(markerId).setMap(null);
         markersMap.delete(markerId);
     });
+}
+
+/** Constructs Delete All Markers Map Control */
+function DeleteMarkersControl(controlNode) {
+    var controlUI = document.createElement('div');
+    controlUI.setAttribute("id", "delete-markers-control");
+    controlUI.title = "Click to delete all your markers";
+    controlUI.textContent = "Delete All Your Markers";
+    controlNode.appendChild(controlUI);
+    controlUI.addEventListener('click', deleteAllMarkers);
+}
+
+/** Deletes All User Added Markers */
+function deleteAllMarkers() {
+    const request = new Request("/markers?id=all", {method: 'DELETE'});
+    fetch(request).then(response => response.json()).then(markerIds => {
+
+            // Closes all infowindows first
+            infoWindows.forEach(infoWindow => {
+                        infoWindow.close();
+                    });
+            infoWindowsOpened = 0;
+
+            // Clears all user markers
+            markerIds.forEach(markerId => {
+                markersMap.get(markerId).setMap(null);
+                markersMap.delete(markerId);
+            })
+    });
+
 }

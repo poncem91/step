@@ -23,6 +23,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Entities {
@@ -48,7 +49,7 @@ public class Entities {
     }
 
     /** Helper method that deletes all entities by the logged user given its kind */
-    public static void deleteAll(String kind) {
+    public static ArrayList<Long> deleteAll(String kind) {
         UserService userService = UserServiceFactory.getUserService();
         String userId = userService.getCurrentUser().getUserId();
 
@@ -57,9 +58,15 @@ public class Entities {
         query.setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
         PreparedQuery results = datastore.prepare(query);
 
+        ArrayList<Long> deletedIds = new ArrayList<>();
+
         for (Entity entity : results.asIterable()) {
             datastore.delete(entity.getKey());
+            long id = entity.getKey().getId();
+            deletedIds.add(id);
         }
+
+        return deletedIds;
     }
 
 }

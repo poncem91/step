@@ -90,20 +90,28 @@ public class MarkersServlet extends HttpServlet {
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        long id;
+        if (request.getParameter("id").equals("all")) {
+            Entities entities = new Entities();
+            ArrayList<Long> deletedIds = entities.deleteAll("Marker");
+            System.out.println(deletedIds);
+            Gson gson = new Gson();
+            response.setContentType("application/json;");
+            response.getWriter().println(gson.toJson(deletedIds));
+        } else {
+            long id;
 
-        try {
-            id = Long.parseLong(request.getParameter("id"));
-        } catch (NumberFormatException e) {
-            System.err.println("Could not convert to long");
-            id = -1;
-        }
+            try {
+                id = Long.parseLong(request.getParameter("id"));
+            } catch (NumberFormatException e) {
+                System.err.println("Could not convert to long");
+                id = -1;
+            }
 
-        if (id > 0) {
-            Entities.deleteSingle(id, "Marker");
+            if (id > 0) {
+                Entities.deleteSingle(id, "Marker");
+                response.setContentType("text/html;");
+                response.getWriter().println();
+            }
         }
-        
-        response.setContentType("text/html;");
-        response.getWriter().println();
     }
 }
