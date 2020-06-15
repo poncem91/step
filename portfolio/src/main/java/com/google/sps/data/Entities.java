@@ -38,6 +38,7 @@ public class Entities {
         UserService userService = UserServiceFactory.getUserService();
         String userId = userService.getCurrentUser().getUserId();
 
+        // userId is used as a filter to avoid results that include an entity not created by the logged user
         Query.CompositeFilter queryFilter = new Query.CompositeFilter(Query.CompositeFilterOperator.AND, Arrays
             .asList(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId), new Query
             .FilterPredicate("__key__", Query.FilterOperator.EQUAL, entityKey)));
@@ -61,8 +62,8 @@ public class Entities {
         ArrayList<Long> deletedIds = new ArrayList<>();
 
         for (Entity entity : results.asIterable()) {
-            datastore.delete(entity.getKey());
             long id = entity.getKey().getId();
+            datastore.delete(entity.getKey());
             deletedIds.add(id);
         }
 
