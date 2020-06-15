@@ -9,7 +9,16 @@
     <!--Social Media Icons -->
     <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
   </head>
-  <body onload="getComments(5)">
+  <%@ page import = "com.google.appengine.api.users.UserService" %>
+  <%@ page import = "com.google.appengine.api.users.UserServiceFactory" %>
+  <%
+        UserService userService = UserServiceFactory.getUserService();
+        String userId = "";
+        if (userService.isUserLoggedIn()) {
+        userId = userService.getCurrentUser().getUserId();
+        }
+  %>
+  <body onload="getComments(5)" data-user-id="<%=userId%>">
 
     <!-- Sticky Navbar -->
     <div id="navbar">
@@ -128,7 +137,7 @@
               
               <dt>Foundant Technologies</dt>
               <dt class="workposition">Spring 2020 - Client Services Intern</dt>
-              <dd>Assist clients that use Foundant’s grant and scholarship management software or fund accounting software with any technical support questions or issues they might have.</dd>
+              <dd>Assist clients that use Foundant's grant and scholarship management software or fund accounting software with any technical support questions or issues they might have.</dd>
               
               <dt>Silver Lining Entertainment</dt>
               <dt class="workposition">October 2016 to November 2018 - Talent Manager's Assistant</dt>
@@ -136,7 +145,7 @@
               
               <dt>USC Annenberg - Media, Diversity, & Social Change Initiative</dt>
               <dt class="workposition">Summer 2015 - Student Research Assistant</dt>
-              <dd>Analyzed and quantified TV & Film content metrics for the 2014-2015 study: ‘Inclusion or Invisibility? The Comprehensive Annenberg Report on Diversity in Entertainment’ as seen <a href="https://bit.ly/2oBKDUr">here.</a></dd>
+              <dd>Analyzed and quantified TV & Film content metrics for the 2014-2015 study: 'Inclusion or Invisibility? The Comprehensive Annenberg Report on Diversity in Entertainment' as seen <a href="https://bit.ly/2oBKDUr">here.</a></dd>
       </section>
 
       <!-- Contact Me Section -->
@@ -144,15 +153,19 @@
           <h1>Contact Me</h1>
           <p>Please feel free to reach out to me through any of the below platforms or leave a comment below:</p>
 
+          <%
+          if (userService.isUserLoggedIn()) {
+            String urlToRedirectToAfterUserLogsOut = "/";
+            String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+
+          %>
+          <p class="login-messages">(You are logged in as <%=userService.getCurrentUser().getEmail()%>. <a href="<%=logoutUrl%>">Logout.</a>)</p>
+
           <!-- Comments Sub-Section -->
-          <form action="/comments" method="POST">
+          <form action="/comments" method="POST" id="commentform" data-user-id="<%=userId%>">
           <p>
               <label for="name">Name:</label>
               <input id="name" type="text" name="name" placeholder="Optional">
-          </p>
-          <p>
-              <label for="email">Email:</label>
-              <input id="email" type="email" name="email" placeholder="Optional">
           </p>
           <p>
               <label for="comment">Comment:</label>
@@ -162,6 +175,15 @@
               <input id="submit" type="submit" />
           </p>
           </form>
+          <%
+          } else {
+              String urlToRedirectToAfterUserLogsIn = "/";
+              String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+          %>
+          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Login.</a>)</p>
+          <%
+          }
+          %>
           <p>
               <div id="display-options">
                   <div id="maxcomments-div">
@@ -182,7 +204,14 @@
               </div>
           </p>
           <div id="comments-history"></div>
-          <button onclick="deleteComments('all');">Delete All Comments</button>
+
+          <%
+          if (userService.isUserLoggedIn()) {
+          %>
+          <button onclick="deleteComments('all');">Delete All Your Comments</button>
+          <%
+          }
+          %>
 
           <!-- Social Media Sub-Section -->
           <div class="row">

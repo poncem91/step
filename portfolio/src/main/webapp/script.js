@@ -148,16 +148,7 @@ function constructCommentNode(comment) {
 
     var nameNode = document.createElement('div');
     nameNode.classList.add("comment-name");
-
-    if (comment.email === "") {
-        nameNode.innerText = comment.name;
-    } else {
-        var emailNode = document.createElement('a');
-        emailNode.classList.add("comment-email");
-        emailNode.innerText = comment.name;
-        emailNode.href = "mailto:" + comment.email;
-        nameNode.appendChild(emailNode);
-    }
+    nameNode.innerText = comment.name;
 
     var timestampNode = document.createElement('div');
     timestampNode.classList.add("comment-timestamp");
@@ -167,9 +158,17 @@ function constructCommentNode(comment) {
     deleteNode.classList.add("comment-delete");
     var deleteLinkNode = document.createElement('a');
     deleteLinkNode.classList.add("comment-delete-link");
-    deleteLinkNode.innerText = "×";
+
+
+    const userId = document.body.dataset.userId;
+    if (comment.userId == userId) {
+        deleteLinkNode.innerText = "×";
+        deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
+    } else {
+        deleteLinkNode.innerText = " ";
+    }
     deleteLinkNode.setAttribute("data-comment-id", comment.id);
-    deleteLinkNode.setAttribute("onclick", "deleteComments(this.dataset.commentId, getFilter())");
+    
     deleteNode.appendChild(deleteLinkNode);
 
     headerNode.appendChild(nameNode);
@@ -193,6 +192,7 @@ function deleteComments(commentId, filterInput) {
     fetch(request).then(() => {
         getComments(getMaxComments(), filterInput)
     })
+
 }
 
 /** Gets and returns value in Filter Input field */

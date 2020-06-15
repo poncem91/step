@@ -22,7 +22,10 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.sps.data.Comment;
@@ -69,11 +72,11 @@ public class DataServlet extends HttpServlet {
     for (Entity entity : results) {
       long id = entity.getKey().getId();
       String name = (String) entity.getProperty("name");
-      String email = (String) entity.getProperty("email");
       String message = (String) entity.getProperty("message");
       long timestamp = (long) entity.getProperty("timestamp");
+      String userId =  (String) entity.getProperty("userId");
 
-      Comment comment = new Comment(id, name, email, message, timestamp);
+      Comment comment = new Comment(id, name, message, timestamp, userId);
       comments.add(comment);
     }
 
@@ -86,8 +89,11 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
+    UserService userService = UserServiceFactory.getUserService();
+
+    String userId = userService.getCurrentUser().getUserId();
     String name = request.getParameter("name");
-    String email = request.getParameter("email");
+    String email = userService.getCurrentUser().getEmail();
     String comment = request.getParameter("comment");
     long timestamp = System.currentTimeMillis();
     
@@ -100,21 +106,26 @@ public class DataServlet extends HttpServlet {
     commentsEntity.setProperty("email", email);
     commentsEntity.setProperty("message", comment);
     commentsEntity.setProperty("timestamp", timestamp);
+    commentsEntity.setProperty("userId", userId);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentsEntity);
     
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
+    // Redirect back to home page.
+    response.sendRedirect("/");
   }
 
   @Override
   public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    UserService userService = UserServiceFactory.getUserService();
+    String userId = userService.getCurrentUser().getUserId();
 
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Comment");
+    
     if (request.getParameter("id").equals("all")) {
-        
-        Query query = new Query("Comment");
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        query.setFilter(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId));
         PreparedQuery results = datastore.prepare(query);
 
         for (Entity entity : results.asIterable()) {
@@ -134,19 +145,23 @@ public class DataServlet extends HttpServlet {
         }
 
         if (id > 0) {
+
             Key commentEntityKey = KeyFactory.createKey("Comment", id);
-            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-            datastore.delete(commentEntityKey);
+
+            Query.CompositeFilter queryFilter = new Query.CompositeFilter(Query.CompositeFilterOperator.AND, Arrays
+            .asList(new Query.FilterPredicate("userId", Query.FilterOperator.EQUAL, userId), new Query
+            .FilterPredicate("__key__", Query.FilterOperator.EQUAL, commentEntityKey)));
+
+            query.setFilter(queryFilter);
+            PreparedQuery results = datastore.prepare(query);
+            Entity entity = results.asSingleEntity();
+            datastore.delete(entity.getKey());
         }
-    
     }
-    
-    response.setContentType("text/html");
+
+    response.setContentType("text/html;");
+
     response.getWriter().println();
-
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
   }
-
 
 }
