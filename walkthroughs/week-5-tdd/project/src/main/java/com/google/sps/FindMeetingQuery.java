@@ -15,9 +15,44 @@
 package com.google.sps;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    List<Event> sortedEvents = new ArrayList<>(events);  
+    int start = TimeRange.START_OF_DAY;
+    int duration = (int) request.getDuration();
+
+    Collection<String> attendees = request.getAttendees();
+    Collection<TimeRange> result = new ArrayList<>();
+
+    Collections.sort(sortedEvents, Event.ORDER_BY_START);
+    
+    for (Event event : sortedEvents) {
+      Set<String> intersection = new HashSet<>(attendees);
+      intersection.retainAll(event.getAttendees()); 
+      TimeRange eventTR = event.getWhen();
+      TimeRange timerange = TimeRange.fromStartDuration(start, duration);
+      if (!intersection.isEmpty()) {
+          if (!eventTR.overlaps(timerange) && start != eventTR.start()) {
+              result.add(TimeRange.fromStartEnd(start, eventTR.start(), false));
+          }
+      } else if(start != eventTR.end()) {
+          result.add(TimeRange.fromStartEnd(start, eventTR.end(), true));
+      }
+      start = eventTR.end();
+    }
+
+    if (start != TimeRange.END_OF_DAY) {
+      result.add(TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true));
+    }
+
+
+    return result;
+
   }
 }
