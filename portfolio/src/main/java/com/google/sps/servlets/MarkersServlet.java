@@ -19,11 +19,11 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.sps.data.Marker;
-import com.google.sps.data.Entities;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
+import com.google.sps.data.Entities;
+import com.google.sps.data.Marker;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
@@ -35,83 +35,83 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/markers")
 public class MarkersServlet extends HttpServlet {
 
-    /** Responds with marker data. */
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json");
+  /** Responds with marker data. */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("application/json");
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("Marker");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Marker");
 
-        ArrayList<Marker> markers = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
 
-        PreparedQuery results = datastore.prepare(query);
+    PreparedQuery results = datastore.prepare(query);
 
-        for (Entity entity : results.asIterable()) {
-            long id = entity.getKey().getId();
-            double lat = (double) entity.getProperty("lat");
-            double lng = (double) entity.getProperty("lng");
-            String userId = (String) entity.getProperty("userId");
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      double lat = (double) entity.getProperty("lat");
+      double lng = (double) entity.getProperty("lng");
+      String userId = (String) entity.getProperty("userId");
 
-            Marker marker = new Marker(lat, lng, userId, id);
-            markers.add(marker);
-        }
-
-        Gson gson = new Gson();
-        response.getWriter().println(gson.toJson(markers));
-
+      Marker marker = new Marker(lat, lng, userId, id);
+      markers.add(marker);
     }
 
-    /** Receives and stores a new marker, then sends it. */
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UserService userService = UserServiceFactory.getUserService();
+    Gson gson = new Gson();
+    response.getWriter().println(gson.toJson(markers));
+  }
 
-        String userId = userService.getCurrentUser().getUserId();
-        double lat = Double.parseDouble(request.getParameter("lat"));
-        double lng = Double.parseDouble(request.getParameter("lng"));
+  /** Receives and stores a new marker, then sends it. */
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserService userService = UserServiceFactory.getUserService();
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    String userId = userService.getCurrentUser().getUserId();
+    double lat = Double.parseDouble(request.getParameter("lat"));
+    double lng = Double.parseDouble(request.getParameter("lng"));
 
-        Entity entity = new Entity("Marker");
-        entity.setProperty("lat", lat);
-        entity.setProperty("lng", lng);
-        entity.setProperty("userId", userId);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        datastore.put(entity);
-        long id = entity.getKey().getId();
-        Marker marker = new Marker(lat, lng, userId, id);
+    Entity entity = new Entity("Marker");
+    entity.setProperty("lat", lat);
+    entity.setProperty("lng", lng);
+    entity.setProperty("userId", userId);
 
-        Gson gson = new Gson();
-        response.getWriter().println(gson.toJson(marker));
+    datastore.put(entity);
+    long id = entity.getKey().getId();
+    Marker marker = new Marker(lat, lng, userId, id);
+
+    Gson gson = new Gson();
+    response.getWriter().println(gson.toJson(marker));
+  }
+
+  /** Deletes Markers */
+  @Override
+  public void doDelete(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+
+    if (request.getParameter("id").equals("all")) {
+      Entities entities = new Entities();
+      ArrayList<Long> deletedIds = entities.deleteAll("Marker");
+      System.out.println(deletedIds);
+      Gson gson = new Gson();
+      response.setContentType("application/json;");
+      response.getWriter().println(gson.toJson(deletedIds));
+    } else {
+      long id;
+
+      try {
+        id = Long.parseLong(request.getParameter("id"));
+      } catch (NumberFormatException e) {
+        System.err.println("Could not convert to long");
+        id = -1;
+      }
+
+      if (id > 0) {
+        Entities.deleteSingle(id, "Marker");
+        response.setContentType("text/html;");
+        response.getWriter().println();
+      }
     }
-
-    /** Deletes Markers */
-    @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        if (request.getParameter("id").equals("all")) {
-            Entities entities = new Entities();
-            ArrayList<Long> deletedIds = entities.deleteAll("Marker");
-            System.out.println(deletedIds);
-            Gson gson = new Gson();
-            response.setContentType("application/json;");
-            response.getWriter().println(gson.toJson(deletedIds));
-        } else {
-            long id;
-
-            try {
-                id = Long.parseLong(request.getParameter("id"));
-            } catch (NumberFormatException e) {
-                System.err.println("Could not convert to long");
-                id = -1;
-            }
-
-            if (id > 0) {
-                Entities.deleteSingle(id, "Marker");
-                response.setContentType("text/html;");
-                response.getWriter().println();
-            }
-        }
-    }
+  }
 }

@@ -14,7 +14,6 @@
 
 package com.google.sps.data;
 
-
 /** An individual marker */
 public final class Marker {
 
@@ -29,5 +28,4 @@ public final class Marker {
     this.userId = userId;
     this.id = id;
   }
-
 }
