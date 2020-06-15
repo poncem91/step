@@ -90,12 +90,12 @@ public class MarkersServlet extends HttpServlet {
   public void doDelete(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
 
+    response.setContentType("application/json;");
+    Gson gson = new Gson();
+
     if (request.getParameter("id").equals("all")) {
       Entities entities = new Entities();
       ArrayList<Long> deletedIds = entities.deleteAll("Marker");
-      System.out.println(deletedIds);
-      Gson gson = new Gson();
-      response.setContentType("application/json;");
       response.getWriter().println(gson.toJson(deletedIds));
     } else {
       long id;
@@ -109,7 +109,6 @@ public class MarkersServlet extends HttpServlet {
 
       if (id > 0) {
         Entities.deleteSingle(id, "Marker");
-        response.setContentType("text/html;");
         response.getWriter().println();
       }
     }
