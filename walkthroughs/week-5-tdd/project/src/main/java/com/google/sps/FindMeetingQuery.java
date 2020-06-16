@@ -23,36 +23,46 @@ import java.util.HashSet;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    List<Event> sortedEvents = new ArrayList<>(events);  
+      
     int start = TimeRange.START_OF_DAY;
     int duration = (int) request.getDuration();
-
     Collection<String> attendees = request.getAttendees();
-    Collection<TimeRange> result = new ArrayList<>();
-
-    Collections.sort(sortedEvents, Event.ORDER_BY_START);
     
+    Collection<TimeRange> result = new ArrayList<>();
+    List<Event> sortedEvents = new ArrayList<>();
+
+    if (duration > TimeRange.WHOLE_DAY.duration()){
+        return result;
+    }
+
+    // Considers and adds only events with mutual attendees
+    for (Event event : events) {
+        Set<String> mutualAttendees = new HashSet<>(attendees);
+        mutualAttendees.retainAll(event.getAttendees());
+        if (!mutualAttendees.isEmpty()) {
+            sortedEvents.add(event);
+        }
+    }
+    Collections.sort(sortedEvents, Event.ORDER_BY_START);
+
+    // Determines possible meeting times before and in between events
     for (Event event : sortedEvents) {
-      Set<String> intersection = new HashSet<>(attendees);
-      intersection.retainAll(event.getAttendees()); 
       TimeRange eventTR = event.getWhen();
-      TimeRange timerange = TimeRange.fromStartDuration(start, duration);
-      if (!intersection.isEmpty()) {
-          if (!eventTR.overlaps(timerange) && start != eventTR.start()) {
-              result.add(TimeRange.fromStartEnd(start, eventTR.start(), false));
-          }
-      } else if(start != eventTR.end()) {
-          result.add(TimeRange.fromStartEnd(start, eventTR.end(), true));
-      }
-      start = eventTR.end();
+      if (start <= eventTR.start()) {
+        TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
+        if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
+          result.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
+        }
+        start = eventTR.end();
+      } else if (eventTR.end() > start) start = eventTR.end();
     }
 
-    if (start != TimeRange.END_OF_DAY) {
-      result.add(TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true));
+    // Assesses remaining time left in day after events are finished
+    if (start != (TimeRange.END_OF_DAY + 1)) {
+      TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
+      if (restOfDay.duration() >= duration) result.add(endOfDay);
     }
-
-
+    
     return result;
-
   }
 }
