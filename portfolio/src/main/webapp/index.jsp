@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width">
     <title>Mafe's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script type='text/javascript' src='config.js'></script>
     <script src="script.js"></script>
     <!--Social Media Icons -->
     <script src="https://kit.fontawesome.com/71105f4105.js" crossorigin="anonymous"></script> 
@@ -14,11 +15,13 @@
   <%
         UserService userService = UserServiceFactory.getUserService();
         String userId = "";
+        boolean userLogged = false;
         if (userService.isUserLoggedIn()) {
-        userId = userService.getCurrentUser().getUserId();
+            userId = userService.getCurrentUser().getUserId();
+            userLogged = true;
         }
   %>
-  <body onload="getComments(5)" data-user-id="<%=userId%>">
+  <body onload="getComments(5); loadMaps()" data-user-id="<%=userId%>" data-user-logged="<%=userLogged%>">
 
     <!-- Sticky Navbar -->
     <div id="navbar">
@@ -151,7 +154,7 @@
       <!-- Contact Me Section -->
       <section id="contactme">
           <h1>Contact Me</h1>
-          <p>Please feel free to reach out to me through any of the below platforms or leave a comment below:</p>
+          <p>Please feel free to connect with me through any of the below social platforms, by leaving a comment below, or by sharing where you are visiting from using the map below!</p>
 
           <%
           if (userService.isUserLoggedIn()) {
@@ -180,7 +183,7 @@
               String urlToRedirectToAfterUserLogsIn = "/";
               String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
           %>
-          <p class="login-messages">(You must login before submitting a comment. <a href="<%=loginUrl%>">Login.</a>)</p>
+          <p class="login-messages">(You must login before submitting a comment or adding a marker in the map. <a href="<%=loginUrl%>">Login.</a>)</p>
           <%
           }
           %>
@@ -208,10 +211,13 @@
           <%
           if (userService.isUserLoggedIn()) {
           %>
-          <button onclick="deleteComments('all');">Delete All Your Comments</button>
+          <button onclick="deleteComments('all');" id="delete-all">Delete All Your Comments</button>
           <%
           }
           %>
+
+          <!-- Map Sub-Section -->
+          <div id="map"></div>
 
           <!-- Social Media Sub-Section -->
           <div class="row">

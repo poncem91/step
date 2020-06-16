@@ -235,6 +235,9 @@ input, textarea {
     text-decoration: none;
     cursor: pointer;
 }
+#delete-all {
+    margin-bottom: 2em;
+}
 
 /* Lightbox */
 #lightbox {
@@ -305,6 +308,23 @@ figcaption {
     color: white;
     text-align: center;
     margin-top: 0;
+}
+
+/* Map styling */
+#map {
+    height: 450px;
+    display: none;
+}
+#delete-markers-control {
+    background-color: #fff;
+    color: rgb(61,61,61);
+    font-size: 14px;
+    font-family: Roboto,Arial,sans-serif;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Responsive navbar to screen width */
