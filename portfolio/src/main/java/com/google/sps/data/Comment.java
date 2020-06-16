@@ -13,8 +13,9 @@
 // limitations under the License.
 
 package com.google.sps.data;
-import java.text.SimpleDateFormat;
+
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /** An individual comment */
 public final class Comment {
@@ -34,9 +35,8 @@ public final class Comment {
   }
 
   public String getDatetime(long inputTimestamp) {
-      Timestamp timestamp = new Timestamp(inputTimestamp);
-      SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-      return timestampFormat.format(timestamp);
+    Timestamp timestamp = new Timestamp(inputTimestamp);
+    SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    return timestampFormat.format(timestamp);
   }
-
 }
