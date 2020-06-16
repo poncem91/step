@@ -26,32 +26,47 @@ public final class FindMeetingQuery {
       
     int start = TimeRange.START_OF_DAY;
     int duration = (int) request.getDuration();
-    Collection<String> attendees = request.getAttendees();
+
+    Collection<String> mandatoryAttendees = request.getAttendees();
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+    Collection<String> totalAttendees = new HashSet<>(mandatoryAttendees);
+    for (String attendee : optionalAttendees) {
+        totalAttendees.add(attendee);
+    }
     
-    Collection<TimeRange> result = new ArrayList<>();
-    List<Event> sortedEvents = new ArrayList<>();
+    Collection<TimeRange> resultWithOptionals = new ArrayList<>();
+    Collection<TimeRange> resultWithoutOptionals = new ArrayList<>();
+    List<Event> sortedEventsWithOptionals = new ArrayList<>();
+    List<Event> sortedEventsWithoutOptionals = new ArrayList<>();
 
     if (duration > TimeRange.WHOLE_DAY.duration()){
-        return result;
+        return resultWithOptionals;
     }
 
     // Considers and adds only events with mutual attendees
     for (Event event : events) {
-        Set<String> mutualAttendees = new HashSet<>(attendees);
-        mutualAttendees.retainAll(event.getAttendees());
-        if (!mutualAttendees.isEmpty()) {
-            sortedEvents.add(event);
+        Set<String> mutualTotalAttendees = new HashSet<>(totalAttendees);
+        mutualTotalAttendees.retainAll(event.getAttendees());
+        if (!mutualTotalAttendees.isEmpty()) {
+            sortedEventsWithOptionals.add(event);
+        }
+        Set<String> mutualMandatoryAttendees = new HashSet<>(mandatoryAttendees);
+        mutualMandatoryAttendees.retainAll(event.getAttendees());
+        if (!mutualMandatoryAttendees.isEmpty()) {
+            sortedEventsWithoutOptionals.add(event);
         }
     }
-    Collections.sort(sortedEvents, Event.ORDER_BY_START);
+    Collections.sort(sortedEventsWithOptionals, Event.ORDER_BY_START);
+    Collections.sort(sortedEventsWithoutOptionals, Event.ORDER_BY_START);
 
-    // Determines possible meeting times before and in between events
-    for (Event event : sortedEvents) {
+    // Determines possible meeting times before and in between events with optional attendees
+    for (Event event : sortedEventsWithOptionals) {
+
       TimeRange eventTR = event.getWhen();
       if (start <= eventTR.start()) {
         TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
         if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
-          result.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
+          resultWithOptionals.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
         }
         start = eventTR.end();
       } else if (eventTR.end() > start) start = eventTR.end();
@@ -60,9 +75,34 @@ public final class FindMeetingQuery {
     // Assesses remaining time left in day after events are finished
     if (start != (TimeRange.END_OF_DAY + 1)) {
       TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
-      if (restOfDay.duration() >= duration) result.add(endOfDay);
+      if (restOfDay.duration() >= duration) resultWithOptionals.add(restOfDay);
     }
+
+    // Resets start time
+    start = TimeRange.START_OF_DAY;
     
-    return result;
+    // Determines possible meeting times before and in between events with mandatory only attendees
+    for (Event event : sortedEventsWithoutOptionals) {
+
+      TimeRange eventTR = event.getWhen();
+      if (start <= eventTR.start()) {
+        TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
+        if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
+          resultWithoutOptionals.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
+        }
+        start = eventTR.end();
+      } else if (eventTR.end() > start) start = eventTR.end();
+    }
+
+    // Assesses remaining time left in day after events are finished
+    if (start != (TimeRange.END_OF_DAY + 1)) {
+      TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
+      if (restOfDay.duration() >= duration) resultWithoutOptionals.add(restOfDay);
+    }
+
+    // If one or more time slots exists so that both mandatory and optional attendees can attend, return those time slots.
+    // Otherwise, return the time slots that fit just the mandatory attendees.
+    if (resultWithOptionals.isEmpty() && !mandatoryAttendees.isEmpty()) return resultWithoutOptionals;
+    return resultWithOptionals;
   }
 }
