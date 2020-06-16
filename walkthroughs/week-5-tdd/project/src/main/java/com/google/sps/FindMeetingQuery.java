@@ -17,16 +17,16 @@ package com.google.sps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-      
-    int start = TimeRange.START_OF_DAY;
-    int duration = (int) request.getDuration();
 
+    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) return Arrays.asList();
+      
     Collection<String> mandatoryAttendees = request.getAttendees();
     Collection<String> optionalAttendees = request.getOptionalAttendees();
     Collection<String> totalAttendees = new HashSet<>(mandatoryAttendees);
@@ -34,75 +34,51 @@ public final class FindMeetingQuery {
         totalAttendees.add(attendee);
     }
     
-    Collection<TimeRange> resultWithOptionals = new ArrayList<>();
-    Collection<TimeRange> resultWithoutOptionals = new ArrayList<>();
-    List<Event> sortedEventsWithOptionals = new ArrayList<>();
-    List<Event> sortedEventsWithoutOptionals = new ArrayList<>();
+    List<Event> sortedEventsWithOptionals = createEventsList(events,totalAttendees);
+    List<Event> sortedEventsWithoutOptionals = createEventsList(events, mandatoryAttendees);
 
-    if (duration > TimeRange.WHOLE_DAY.duration()){
-        return resultWithOptionals;
-    }
+    List<TimeRange> resultWithOptionals = queryBuilder(sortedEventsWithOptionals, request);
+    List<TimeRange> resultWithoutOptionals = queryBuilder(sortedEventsWithoutOptionals, request);    
 
-    // Considers and adds only events with mutual attendees
-    for (Event event : events) {
-        Set<String> mutualTotalAttendees = new HashSet<>(totalAttendees);
-        mutualTotalAttendees.retainAll(event.getAttendees());
-        if (!mutualTotalAttendees.isEmpty()) {
-            sortedEventsWithOptionals.add(event);
-        }
-        Set<String> mutualMandatoryAttendees = new HashSet<>(mandatoryAttendees);
-        mutualMandatoryAttendees.retainAll(event.getAttendees());
-        if (!mutualMandatoryAttendees.isEmpty()) {
-            sortedEventsWithoutOptionals.add(event);
-        }
-    }
-    Collections.sort(sortedEventsWithOptionals, Event.ORDER_BY_START);
-    Collections.sort(sortedEventsWithoutOptionals, Event.ORDER_BY_START);
-
-    // Determines possible meeting times before and in between events with optional attendees
-    for (Event event : sortedEventsWithOptionals) {
-
-      TimeRange eventTR = event.getWhen();
-      if (start <= eventTR.start()) {
-        TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
-        if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
-          resultWithOptionals.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
-        }
-        start = eventTR.end();
-      } else if (eventTR.end() > start) start = eventTR.end();
-    }
-
-    // Assesses remaining time left in day after events are finished
-    if (start != (TimeRange.END_OF_DAY + 1)) {
-      TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
-      if (restOfDay.duration() >= duration) resultWithOptionals.add(restOfDay);
-    }
-
-    // Resets start time
-    start = TimeRange.START_OF_DAY;
-    
-    // Determines possible meeting times before and in between events with mandatory only attendees
-    for (Event event : sortedEventsWithoutOptionals) {
-
-      TimeRange eventTR = event.getWhen();
-      if (start <= eventTR.start()) {
-        TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
-        if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
-          resultWithoutOptionals.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
-        }
-        start = eventTR.end();
-      } else if (eventTR.end() > start) start = eventTR.end();
-    }
-
-    // Assesses remaining time left in day after events are finished
-    if (start != (TimeRange.END_OF_DAY + 1)) {
-      TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
-      if (restOfDay.duration() >= duration) resultWithoutOptionals.add(restOfDay);
-    }
-
-    // If one or more time slots exists so that both mandatory and optional attendees can attend, return those time slots.
-    // Otherwise, return the time slots that fit just the mandatory attendees.
     if (resultWithOptionals.isEmpty() && !mandatoryAttendees.isEmpty()) return resultWithoutOptionals;
     return resultWithOptionals;
+  }
+
+  /** Builds and returns a query results list of timeranges */
+  private List<TimeRange> queryBuilder(List<Event> events, MeetingRequest request) {
+    int start = TimeRange.START_OF_DAY;
+    int duration = (int) request.getDuration();
+    List<TimeRange> results = new ArrayList<>();
+
+    // Determines and adds possible meeting times before and in between events
+    for (Event event : events) {
+      TimeRange eventTR = event.getWhen();
+      if (start <= eventTR.start()) {
+        TimeRange proposedTR = TimeRange.fromStartDuration(start, duration);
+        if (!eventTR.overlaps(proposedTR) && start != eventTR.start()) {
+          results.add(TimeRange.fromStartEnd(start, eventTR.start(), false));   
+        }
+        start = eventTR.end();
+      } else if (eventTR.end() > start) start = eventTR.end();
+    }
+
+    // Assesses and adds possible remaining time left in day after events are finished
+    if (start != (TimeRange.END_OF_DAY + 1)) {
+      TimeRange restOfDay = TimeRange.fromStartEnd(start, TimeRange.END_OF_DAY, true);
+      if (restOfDay.duration() >= duration) results.add(restOfDay);
+    }
+    return results;
+  }
+
+  /** Creates and returns a list of events that include certain attendees */
+  private List<Event> createEventsList(Collection<Event> events, Collection<String> attendees) {
+    List<Event> eventsList = new ArrayList<>();
+    for (Event event : events) {
+      Set<String> mutualAttendees = new HashSet<>(attendees);
+      mutualAttendees.retainAll(event.getAttendees());
+      if (!mutualAttendees.isEmpty()) eventsList.add(event);
+    }
+    Collections.sort(eventsList, Event.ORDER_BY_START);
+    return eventsList;
   }
 }
